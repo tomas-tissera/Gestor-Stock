@@ -42,7 +42,7 @@
             <div class="col-md-9 col-lg-10 main-content p-4">
                 <h2 class="welcome-message mb-4">Bienvenido, {{ user.username }}!</h2>
 
-                {% if user.role == 'empleado' %}
+                {% if role == 'Empleado' %}
                     <div class="alert alert-info role-alert" role="alert">
                         Estás logueado como **Empleado**. Aquí podrás gestionar ventas, clientes e inventario.
                     </div>
@@ -58,7 +58,7 @@
                             <a href="#" class="btn btn-danger action-btn w-100">Realizar Venta</a>
                         </div>
                     </div>
-                {% elif user.role == 'encargado' %}
+                {% elif role == 'Encargado' %}
                     <div class="alert alert-warning role-alert" role="alert">
                         Estás logueado como **Encargado**. Aquí podrás gestionar empleados, inventarios y más.
                     </div>

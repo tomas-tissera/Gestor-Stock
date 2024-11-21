@@ -18,7 +18,7 @@ def role_based_view(request):
         role = 'Invitado'  # Si el usuario no tiene rol asignado
 
     # Pasa el rol a la plantilla
-    return render(request, 'role_based_template.html', {'role': role})
+    role_based_view
 
 
 def home_view(request):
