@@ -1,9 +1,9 @@
 from django.contrib import admin
 from django.urls import path, include
-from django.shortcuts import redirect
+from myapp import views
 
 urlpatterns = [
-    path('accounts/profile/', lambda request: redirect('/')),  # Redirige a la página principal
+    path('', views.CustomLoginView.as_view(), name='login'),  # Redirige a la vista de login
     path('admin/', admin.site.urls),
-    path('', include('myapp.urls')),
+    path('role-based/', views.role_based_view, name='role_based_view'),
 ]
