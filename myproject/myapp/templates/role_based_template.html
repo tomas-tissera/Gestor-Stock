@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Vista por Rol</title>
+</head>
+<body>
+    <h1>Bienvenido</h1>
+    {% if role == 'Encargado' %}
+        <p>Bienvenido, Encargado. Aquí puedes gestionar empleados, stock y más.</p>
+    {% elif role == 'Empleado' %}
+        <p>Bienvenido, Empleado. Puedes registrar ventas y gestionar stock.</p>
+    {% else %}
+        <p>Bienvenido, Invitado. Inicia sesión para acceder a más funcionalidades.</p>
+    {% endif %}
+</body>
+</html>
