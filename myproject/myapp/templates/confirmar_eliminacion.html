@@ -1,0 +1,7 @@
+<!-- confirmar_eliminacion.html -->
+<h2>¿Seguro que quieres eliminar al empleado {{ empleado.nombre }}?</h2>
+<form method="POST">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-danger">Eliminar</button>
+    <a href="{% url 'gestion_empleados' %}" class="btn btn-secondary">Cancelar</a>
+</form>

@@ -1,0 +1,22 @@
+<form method="POST">
+    {% csrf_token %}
+    <label for="nombre">Nombre:</label>
+    <input type="text" name="nombre" required><br>
+    
+    <label for="apellido">Apellido:</label>
+    <input type="text" name="apellido" required><br>
+    
+    <label for="telefono">Teléfono:</label>
+    <input type="text" name="telefono" required><br>
+    
+    <label for="email">Email:</label>
+    <input type="email" name="email" required><br>
+    
+    <label for="rol">Rol:</label>
+    <select name="rol" required>
+        <option value="Empleado">Empleado</option>
+        <option value="Encargado">Encargado</option>
+    </select><br>
+    
+    <button type="submit">Crear Empleado</button>
+</form>
