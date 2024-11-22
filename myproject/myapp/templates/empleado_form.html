@@ -1,6 +1,63 @@
-<!-- empleado_form.html -->
-<form method="POST">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Guardar</button>
-</form>
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="text-center mb-4">Crear o Editar Empleado</h1>
+
+    <form method="POST" class="employee-form">
+        {% csrf_token %}
+        
+        <!-- Renderizamos el formulario usando {{ form.as_p }} para mostrar los campos -->
+        {{ form.as_p }}
+        
+        <!-- Botón para enviar el formulario -->
+        <div class="text-center mt-4">
+            <button type="submit" class="btn btn-success">Guardar</button>
+        </div>
+    </form>
+</div>
+{% endblock %}
+
+{% block styles %}
+<style>
+    .employee-form {
+        background-color: #f9f9f9;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .form-group {
+        margin-bottom: 15px;
+    }
+
+    .form-group label {
+        font-weight: bold;
+    }
+
+    .form-control {
+        border-radius: 4px;
+        padding: 10px;
+        border: 1px solid #ccc;
+    }
+
+    .form-control:focus {
+        border-color: #007bff;
+        box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+    }
+
+    button[type="submit"] {
+        width: 100%;
+        padding: 12px;
+        font-size: 16px;
+        cursor: pointer;
+        border-radius: 4px;
+        border: none;
+    }
+
+    button[type="submit"]:hover {
+        background-color: #28a745;
+        transition: background-color 0.3s ease;
+    }
+</style>
+{% endblock %}

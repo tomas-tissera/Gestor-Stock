@@ -50,7 +50,7 @@ class CustomLoginView(LoginView):
 #Gestion de empleados
 def gestion_empleados(request):
     # Filtrar los empleados que están en el grupo 'Empleados'
-    empleados = Empleados.objects.filter(user__groups__name='Empleados')
+    empleados = Empleados.objects.all()  # Obtener todos los empleados
     return render(request, 'empleados_gestion.html', {'empleados': empleados})
 
 
