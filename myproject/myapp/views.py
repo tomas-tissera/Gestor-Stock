@@ -9,11 +9,11 @@ from django.urls import reverse_lazy
 def role_based_view(request):
     user = request.user
 
-    # Verifica si el usuario pertenece al grupo 'Encargado' o 'Empleado'
+    # Verifica si el usuario pertenece al grupo 'Encargado' o 'Empleados'
     if user.groups.filter(name='Encargado').exists():
         role = 'Encargado'
-    elif user.groups.filter(name='Empleado').exists():
-        role = 'Empleado'
+    elif user.groups.filter(name='Empleados').exists():
+        role = 'Empleados'
     else:
         role = 'Invitado'  # Si el usuario no tiene rol asignado
 
@@ -27,11 +27,11 @@ def home_view(request):
 def role_based_view(request):
     user = request.user
 
-    # Verifica si el usuario pertenece al grupo 'Encargado' o 'Empleado'
+    # Verifica si el usuario pertenece al grupo 'Encargado' o 'Empleados'
     if user.groups.filter(name='Encargado').exists():
         role = 'Encargado'
-    elif user.groups.filter(name='Empleado').exists():
-        role = 'Empleado'
+    elif user.groups.filter(name='Empleados').exists():
+        role = 'Empleados'
     else:
         role = 'Invitado'
 
