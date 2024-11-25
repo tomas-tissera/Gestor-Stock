@@ -41,6 +41,7 @@ INSTALLED_APPS = [
 ]
 LOGIN_URL = '/login/'
 LOGIN_REDIRECT_URL = '/role-based/'  # Después de login, redirige a 'role-based/'
+LOGOUT_REDIRECT_URL = '/login/'  # Redirige al login después del logout
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -128,3 +129,5 @@ STATICFILES_DIRS = [
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+CSRF_TRUSTED_ORIGINS = ['http://localhost', 'http://127.0.0.1']
+SESSION_ENGINE = 'django.contrib.sessions.backends.db'

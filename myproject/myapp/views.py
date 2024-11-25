@@ -10,6 +10,11 @@ from django.shortcuts import render, get_object_or_404, redirect
 from .models import Empleados
 from .forms import EmpleadoForm
 from django.contrib.auth.models import User
+from django.contrib.auth.views import LoginView
+
+class CustomLoginView(LoginView):
+    template_name = 'login.html'
+    redirect_authenticated_user = True  # Redirige a usuarios autenticados
 
 
 @login_required
@@ -25,7 +30,6 @@ def role_based_view(request):
         role = 'Invitado'  # Si el usuario no tiene rol asignado
 
     return render(request, 'role_based_template.html', {'role': role})
-
 
 def home_view(request):
     return render(request, 'home.html')
@@ -50,7 +54,8 @@ class CustomLoginView(LoginView):
 #Gestion de empleados
 def gestion_empleados(request):
     # Filtrar los empleados que están en el grupo 'Empleados'
-    empleados = Empleados.objects.all()  # Obtener todos los empleados
+    empleados = Empleados.objects.all()
+
     return render(request, 'empleados_gestion.html', {'empleados': empleados})
 
 
@@ -62,28 +67,25 @@ def crear_empleado(request):
         apellido = request.POST.get('apellido')
         telefono = request.POST.get('telefono')
         email = request.POST.get('email')
-        rol = request.POST.get('rol')  # Obtén el rol desde el formulario
+        rol = request.POST.get('rol')
 
-        # Verificar si el rol es válido (esto es opcional, pero te ayuda a prevenir problemas)
-        if rol not in ['Empleado', 'Encargado']:
-            rol = 'Empleado'  # Asignar un valor predeterminado si el rol no es válido
-
-        # Crear el nuevo usuario
-        user = User.objects.create_user(username=email, email=email, password='temp_password')
+        # Crear el nuevo usuario (solo si no existe ya)
+        user = User.objects.create_user(username=email, email=email, password='temp_password')  # O usa otro campo como username
 
         # Crear el nuevo empleado
         empleado = Empleados.objects.create(
-            user=user,
+            user=user,  # Asocia el usuario
             nombre=nombre,
             apellido=apellido,
             telefono=telefono,
             email=email,
-            rol=rol  # Asegúrate de que el rol esté asignado
+            rol=rol
         )
 
-        return redirect('gestion_empleados')  # Redirige a la vista de gestión de empleados
+        return redirect('gestion_empleados')  # Redirige a la vista de gestión de empleados después de crear el empleado
 
     return render(request, 'empleados/crear_empleado.html')
+
 def editar_empleado(request, id):
     empleado = get_object_or_404(Empleados, id=id)  # Obtener el empleado por ID
     if request.method == 'POST':
