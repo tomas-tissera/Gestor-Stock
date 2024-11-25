@@ -1,7 +1,7 @@
 # forms.py
 from django import forms
 from django.contrib.auth.models import User
-from .models import Empleados
+from .models import Empleados , Categoria, Producto
 
 class EmpleadoForm(forms.ModelForm):
     class Meta:
@@ -15,3 +15,13 @@ class EmpleadoForm(forms.ModelForm):
         if commit:
             instance.save()
         return instance
+
+class CategoriaForm(forms.ModelForm):
+    class Meta:
+        model = Categoria
+        fields = ['nombre', 'descripcion']
+
+class ProductoForm(forms.ModelForm):
+    class Meta:
+        model = Producto
+        fields = ['titulo', 'descripcion', 'precio', 'cantidad', 'categoria']

@@ -4,10 +4,10 @@ from django.contrib.auth.models import Group
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LoginView
 from django.urls import reverse_lazy
-from .models import Empleados
+from .models import Empleados , Producto, Categoria
 from .forms import EmpleadoForm  # Asegúrate de que tienes un formulario para crear empleados
 from django.shortcuts import render, get_object_or_404, redirect
-from .models import Empleados
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from .forms import EmpleadoForm
 from django.contrib.auth.models import User
 from django.contrib.auth.views import LoginView
@@ -103,3 +103,67 @@ def eliminar_empleado(request, id):
         empleado.delete()  # Elimina el empleado
         return redirect('gestion_empleados')  # Redirige a la vista de gestión de empleados
     return render(request, 'confirmar_eliminacion.html', {'empleado': empleado})
+
+# Listar categorías
+class CategoriaListView(ListView):
+    model = Categoria
+    template_name = "categoria_list.html"
+    context_object_name = "categorias"
+
+# Detalle de una categoría (opcional)
+class CategoriaDetailView(DetailView):
+    model = Categoria
+    template_name = "categoria_detail.html"
+    context_object_name = "categoria"
+
+# Crear categoría
+class CategoriaCreateView(CreateView):
+    model = Categoria
+    template_name = "categoria_form.html"
+    fields = ['nombre', 'descripcion']
+    success_url = reverse_lazy('categoria_list')
+
+# Editar categoría
+class CategoriaUpdateView(UpdateView):
+    model = Categoria
+    template_name = "categoria_form.html"
+    fields = ['nombre', 'descripcion']
+    success_url = reverse_lazy('categoria_list')
+
+# Eliminar categoría
+class CategoriaDeleteView(DeleteView):
+    model = Categoria
+    template_name = "categoria_confirm_delete.html"
+    success_url = reverse_lazy('categoria_list')
+
+# Listar productos
+class ProductoListView(ListView):
+    model = Producto
+    template_name = "producto_list.html"
+    context_object_name = "productos"
+
+# Detalle de un producto
+class ProductoDetailView(DetailView):
+    model = Producto
+    template_name = "producto_detail.html"
+    context_object_name = "producto"
+
+# Crear producto
+class ProductoCreateView(CreateView):
+    model = Producto
+    template_name = "producto_form.html"
+    fields = ['titulo', 'descripcion', 'precio', 'cantidad', 'categoria']
+    success_url = reverse_lazy('producto_list')
+
+# Editar producto
+class ProductoUpdateView(UpdateView):
+    model = Producto
+    template_name = "producto_form.html"
+    fields = ['titulo', 'descripcion', 'precio', 'cantidad', 'categoria']
+    success_url = reverse_lazy('producto_list')
+
+# Eliminar producto
+class ProductoDeleteView(DeleteView):
+    model = Producto
+    template_name = "producto_confirm_delete.html"
+    success_url = reverse_lazy('producto_list')
