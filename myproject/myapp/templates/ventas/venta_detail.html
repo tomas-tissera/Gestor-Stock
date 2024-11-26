@@ -1,4 +1,4 @@
-{% extends '../base.html' %}
+{% extends 'base.html' %}
 
 {% block content %}
 <div class="container mt-4">
@@ -10,7 +10,7 @@
         </div>
         <div class="card-body">
             <p><strong>Fecha de venta:</strong> {{ venta.fecha_venta }}</p>
-            <p><strong>Vendedor:</strong> {{ venta.vendedor.get_full_name }}</p>
+            <p><strong>Vendedor:</strong> {{ venta.vendedor }}</p>  <!-- Mostrar vendedor aquí -->
             
             <h4>Productos Comprados</h4>
             <table class="table table-bordered">

@@ -7,20 +7,23 @@
         {% csrf_token %}
         {{ form.as_p }}
 
-        <!-- Agregar productos -->
         <h3>Agregar Productos</h3>
         <div id="productos">
             <div class="producto-item">
                 <label for="producto">Producto</label>
-                <select name="producto" class="form-control">
+                <select name="producto_0" class="form-control producto" data-index="0">
+                    <option value="">Seleccione un producto</option>
                     {% for producto in productos %}
-                        <option value="{{ producto.id }}">{{ producto.titulo }} (Stock: {{ producto.cantidad }})</option>
+                        <option value="{{ producto.id }}" data-precio="{{ producto.precio }}">{{ producto.titulo }} (Stock: {{ producto.cantidad }})</option>
                     {% endfor %}
                 </select>
+                
                 <label for="cantidad">Cantidad</label>
-                <input type="number" name="cantidad" class="form-control" value="1" required min="1">
+                <input type="number" name="cantidad_0" class="form-control" value="1" required min="1">
+                
                 <label for="precio_unitario">Precio Unitario</label>
-                <input type="number" name="precio_unitario" class="form-control" step="0.01" required>
+                <input type="number" name="precio_unitario_0" class="form-control precio_unitario" step="0.01" required readonly>
+                
                 <br>
             </div>
         </div>
@@ -34,27 +37,55 @@
   </div>
 
   <script>
+    let productoCount = 1;
+
+    // Función para actualizar el precio unitario
+    function actualizarPrecioUnitario(event) {
+        const selectProducto = event.target;
+        const precioUnitarioInput = selectProducto.closest('.producto-item').querySelector('.precio_unitario');
+        
+        // Obtiene el precio del producto seleccionado
+        const precio = selectProducto.selectedOptions[0].getAttribute('data-precio');
+        
+        // Actualiza el campo precio unitario con el valor obtenido
+        if (precio) {
+            precioUnitarioInput.value = precio;
+        }
+    }
+
+    // Agregar evento de cambio en los select de productos
+    document.querySelectorAll('.producto').forEach(function(select) {
+        select.addEventListener('change', actualizarPrecioUnitario);
+    });
+
+    // Agregar un nuevo producto dinámicamente
     document.getElementById('agregarProducto').addEventListener('click', function() {
         var productosContainer = document.getElementById('productos');
         var productoItem = document.createElement('div');
         productoItem.classList.add('producto-item');
         
-        // Agregar los campos para seleccionar producto, cantidad y precio
+        // Crear nuevos campos para producto, cantidad y precio
         productoItem.innerHTML = `
             <label for="producto">Producto</label>
-            <select name="producto" class="form-control">
+            <select name="producto_${productoCount}" class="form-control producto" data-index="${productoCount}">
+                <option value="">Seleccione un producto</option>
                 {% for producto in productos %}
-                    <option value="{{ producto.id }}">{{ producto.titulo }} (Stock: {{ producto.cantidad }})</option>
+                    <option value="{{ producto.id }}" data-precio="{{ producto.precio }}">{{ producto.titulo }} (Stock: {{ producto.cantidad }})</option>
                 {% endfor %}
             </select>
             <label for="cantidad">Cantidad</label>
-            <input type="number" name="cantidad" class="form-control" value="1" required min="1">
+            <input type="number" name="cantidad_${productoCount}" class="form-control" value="1" required min="1">
             <label for="precio_unitario">Precio Unitario</label>
-            <input type="number" name="precio_unitario" class="form-control" step="0.01" required>
+            <input type="number" name="precio_unitario_${productoCount}" class="form-control precio_unitario" step="0.01" required readonly>
             <br>
         `;
         
         productosContainer.appendChild(productoItem);
+        
+        // Asignar evento a este nuevo select de producto
+        productoItem.querySelector('.producto').addEventListener('change', actualizarPrecioUnitario);
+        
+        productoCount++; // Incrementa el contador para los nuevos productos
     });
   </script>
 {% endblock %}

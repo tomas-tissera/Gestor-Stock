@@ -30,10 +30,16 @@ class ClienteForm(forms.ModelForm):
         model = Cliente
         fields = ['nombre', 'compania', 'email', 'telefono', 'direccion', 'estatus', 'notas']
 
+
+# forms.py
 class VentaForm(forms.ModelForm):
     class Meta:
         model = Venta
-        fields = ['cliente', 'metodo_pago']
+        fields = ['cliente', 'vendedor', 'metodo_pago']  # Excluye 'fecha_venta'
+
+    # def __init__(self, *args, **kwargs):
+    #     super().__init__(*args, **kwargs)
+    #     self.fields['vendedor'].queryset = User.objects.filter(groups__name='Vendedores')  # Opcional: Filtrar a los usuarios del grupo 'Vendedores'
 
 class DetalleVentaForm(forms.ModelForm):
     class Meta:

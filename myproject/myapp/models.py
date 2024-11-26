@@ -81,12 +81,14 @@ class Cliente(models.Model):
 
 class Venta(models.Model):
     cliente = models.ForeignKey(Cliente, on_delete=models.CASCADE)
-    vendedor = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+    vendedor = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
     fecha_venta = models.DateTimeField(auto_now_add=True)
+    total_venta = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     metodo_pago = models.CharField(max_length=50)
-    total_venta = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+    productos = models.ManyToManyField(Producto, through='DetalleVenta')
 
     def calcular_total(self):
+        # Calculamos el total sumando los subtotales de cada DetalleVenta
         total = sum(detalle.subtotal for detalle in self.detalleventa_set.all())
         self.total_venta = total
         self.save()
@@ -94,17 +96,17 @@ class Venta(models.Model):
     def __str__(self):
         return f"Venta {self.id} - Cliente: {self.cliente}"
 
+
 class DetalleVenta(models.Model):
     venta = models.ForeignKey(Venta, on_delete=models.CASCADE)
     producto = models.ForeignKey(Producto, on_delete=models.CASCADE)
     cantidad = models.PositiveIntegerField()
     precio_unitario = models.DecimalField(max_digits=10, decimal_places=2)
-    subtotal = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
 
-    def save(self, *args, **kwargs):
-        self.subtotal = self.cantidad * self.precio_unitario
-        self.producto.actualizar_stock(self.cantidad)
-        super().save(*args, **kwargs)
+    @property
+    def subtotal(self):
+        return self.cantidad * self.precio_unitario
 
     def __str__(self):
-        return f"Detalle de venta - {self.producto.titulo}"
+        return f"Detalle Venta {self.id} - Producto: {self.producto} - Cantidad: {self.cantidad}"
+

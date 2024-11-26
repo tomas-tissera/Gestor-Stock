@@ -208,7 +208,12 @@ class VentaListView(ListView):
     template_name = 'ventas/venta_list.html'
     context_object_name = 'ventas'
 
+    def get_queryset(self):
+        return Venta.objects.all()  # Asegúrate de que las ventas tengan un vendedor asignado
+
+
 # Detalle de una venta
+# views.py
 class VentaDetailView(DetailView):
     model = Venta
     template_name = 'ventas/venta_detail.html'
@@ -219,22 +224,22 @@ class VentaDetailView(DetailView):
 class VentaCreateView(CreateView):
     model = Venta
     template_name = 'ventas/venta_form.html'
-    fields = ['cliente', 'metodo_pago']  # Campos que el usuario podrá llenar en el formulario
+    form_class = VentaForm  # Usamos el formulario personalizado
+
     success_url = reverse_lazy('venta_list')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        # Filtrar los productos disponibles en stock (cantidad mayor que 0)
+        # Filtramos productos en stock (cantidad mayor que 0)
         productos_en_stock = Producto.objects.filter(cantidad__gt=0)
         context['productos'] = productos_en_stock
         return context
 
     def form_valid(self, form):
-        # Asignar automáticamente el vendedor logueado
-        form.instance.vendedor = self.request.user
+        # Guardamos la venta y los detalles
         venta = form.save()
 
-        # Si hay productos seleccionados, agregar detalles
+        # Si hay productos seleccionados, agregamos los detalles
         productos = self.request.POST.getlist('producto')
         cantidades = self.request.POST.getlist('cantidad')
         precios = self.request.POST.getlist('precio_unitario')
@@ -249,16 +254,23 @@ class VentaCreateView(CreateView):
             )
             detalle.save()
 
-        # Calcular el total de la venta
+        # Calculamos el total de la venta
         venta.calcular_total()
-        
+
         return redirect('venta_list')
-# Editar venta
+
 class VentaUpdateView(UpdateView):
     model = Venta
     template_name = 'ventas/venta_form.html'
-    fields = ['cliente', 'metodo_pago', 'total_venta']  # Actualiza estos campos según sea necesario
+    form_class = VentaForm  # Asegúrate de usar el formulario con el campo 'vendedor'
     success_url = reverse_lazy('venta_list')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # Filtramos productos en stock (cantidad mayor que 0)
+        productos_en_stock = Producto.objects.filter(cantidad__gt=0)
+        context['productos'] = productos_en_stock
+        return context
 
 # Eliminar venta
 class VentaDeleteView(DeleteView):
@@ -278,3 +290,5 @@ class DetalleVentaCreateView(CreateView):
         form.instance.subtotal = form.instance.cantidad * form.instance.precio_unitario
         form.instance.producto.actualizar_stock(form.instance.cantidad)
         return super().form_valid(form)
+    
+    

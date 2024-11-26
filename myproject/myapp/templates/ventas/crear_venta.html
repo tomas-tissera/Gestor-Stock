@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <div class="container mt-4">
+    <h1>Crear Nueva Venta</h1>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+
+        <h3>Agregar Productos</h3>
+        <div id="productos">
+            <div class="producto-item">
+                <label for="producto">Producto</label>
+                <select name="producto" class="form-control">
+                    {% for producto in productos %}
+                        <option value="{{ producto.id }}">{{ producto.titulo }} (Stock: {{ producto.cantidad }})</option>
+                    {% endfor %}
+                </select>
+                
+                <label for="cantidad">Cantidad</label>
+                <input type="number" name="cantidad" class="form-control" value="1" required min="1">
+                
+                <label for="precio_unitario">Precio Unitario</label>
+                <input type="number" name="precio_unitario" class="form-control" step="0.01" required>
+                
+                <br>
+            </div>
+        </div>
+
+        <button type="button" id="agregarProducto" class="btn btn-primary">Agregar otro producto</button>
+        <br><br>
+        
+        <button type="submit" class="btn btn-success">Guardar</button>
+        <a href="{% url 'venta_list' %}" class="btn btn-secondary">Cancelar</a>
+    </form>
+  </div>
+
+  <script>
+    document.getElementById('agregarProducto').addEventListener('click', function() {
+        var productosContainer = document.getElementById('productos');
+        var productoItem = document.createElement('div');
+        productoItem.classList.add('producto-item');
+        
+        productoItem.innerHTML = `
+            <label for="producto">Producto</label>
+            <select name="producto" class="form-control">
+                {% for producto in productos %}
+                    <option value="{{ producto.id }}">{{ producto.titulo }} (Stock: {{ producto.cantidad }})</option>
+                {% endfor %}
+            </select>
+            <label for="cantidad">Cantidad</label>
+            <input type="number" name="cantidad" class="form-control" value="1" required min="1">
+            <label for="precio_unitario">Precio Unitario</label>
+            <input type="number" name="precio_unitario" class="form-control" step="0.01" required>
+            <br>
+        `;
+        
+        productosContainer.appendChild(productoItem);
+    });
+  </script>
+{% endblock %}

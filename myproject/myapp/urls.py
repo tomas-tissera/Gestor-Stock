@@ -40,8 +40,8 @@ urlpatterns = [
 
     # Ventas
     path('ventas/', VentaListView.as_view(), name='venta_list'),
-    path('ventas/<int:pk>/', VentaDetailView.as_view(), name='venta_detail'),
     path('ventas/nuevo/', VentaCreateView.as_view(), name='venta_create'),
-    path('ventas/<int:pk>/editar/', VentaUpdateView.as_view(), name='venta_edit'),
-    path('ventas/<int:pk>/eliminar/', VentaDeleteView.as_view(), name='venta_delete'),
+    path('ventas/<int:pk>/', VentaDetailView.as_view(), name='venta_detail'),
+    path('ventas/editar/<int:pk>/', VentaUpdateView.as_view(), name='venta_edit'),
+    path('ventas/eliminar/<int:pk>/', VentaDeleteView.as_view(), name='venta_delete'),
 ]

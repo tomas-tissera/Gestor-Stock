@@ -9,7 +9,7 @@
         <thead>
             <tr>
                 <th>Cliente</th>
-                <th>Vendedor</th>
+                <th>Vendedor</th>  <!-- Aquí agregamos la columna para el vendedor -->
                 <th>Fecha de Venta</th>
                 <th>Total</th>
                 <th>Acciones</th>
@@ -19,7 +19,7 @@
             {% for venta in ventas %}
             <tr>
                 <td>{{ venta.cliente.nombre }}</td>  <!-- Nombre del cliente -->
-                <td>{{ venta.vendedor.get_full_name }}</td>  <!-- Nombre completo del vendedor -->
+                <td>{{ venta.vendedor }}</td>  <!-- Nombre del vendedor -->
                 <td>{{ venta.fecha_venta|date:"d/m/Y" }}</td>  <!-- Formato de fecha de la venta -->
                 <td>${{ venta.total_venta }}</td>  <!-- Total de la venta -->
                 <td>
