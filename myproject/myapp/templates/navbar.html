@@ -1,5 +1,7 @@
 {% load static %}
-
+<head>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+</head>
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container-fluid">
         <a class="navbar-brand" href="#">Panel de Control</a>
@@ -33,9 +35,12 @@
                 <li class="nav-item">
                     <form method="post" action="{% url 'logout' %}" class="d-inline">
                         {% csrf_token %}
-                        <button type="submit" class="btn btn-link logout-btn">Logout</button>
+                        <button type="submit" class="btn btn-link nav-link logout-btn">
+                            <i class="fas fa-sign-out-alt"></i> 
+                        </button>
                     </form>
                 </li>
+                
             </ul>
         </div>
     </div>
@@ -43,13 +48,37 @@
 
 <!-- Custom CSS -->
 <style>
-    .logout-btn {
-        text-decoration: none; 
-        color: #9b9d9e;
+    ul{
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
+    .logout-btn {
+        text-decoration: none;
+        color: #ccc; /* Igual que el color de los enlaces del navbar */
+        font-size: 1.1rem; /* Ajusta el tamaño para que coincida */
+        padding: 0;
+        border: none;
+        background: none;
+        display: flex;
+        align-items: center;
+        gap: 5px; /* Espaciado entre el ícono y el texto */
+        cursor: pointer;
+        transition: color 0.3s ease, background-color 0.3s ease;
+    }
+    
     .logout-btn:hover {
-        text-decoration: none; 
-        color: #ccc;
-        transition: color 0.3s ease;
+        color: #FF6F0F; /* Color al hacer hover, igual que los otros enlaces */
+        background-color: transparent; /* Sin fondo al hacer hover */
+    }
+    
+    .logout-btn:focus {
+        outline: none; /* Quitar el borde azul al hacer focus */
+    }
+    
+    .logout-btn i {
+        font-size: 1.2rem; /* Ajustar tamaño del ícono si es necesario */
+        vertical-align: middle;
     }
 </style>
+
