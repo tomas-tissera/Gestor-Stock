@@ -4,11 +4,10 @@ from django.contrib.auth.models import Group
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LoginView
 from django.urls import reverse_lazy
-from .models import Empleados , Producto, Categoria , Cliente
-from .forms import EmpleadoForm  # Asegúrate de que tienes un formulario para crear empleados
+from .models import *
+from .forms import *
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
-from .forms import EmpleadoForm
 from django.contrib.auth.models import User
 from django.contrib.auth.views import LoginView
 
@@ -200,3 +199,82 @@ class ClienteDeleteView(DeleteView):
     model = Cliente
     template_name = "clientes/cliente_confirm_delete.html"
     success_url = reverse_lazy('clientes_list')
+
+
+#Venta
+# Listar todas las ventas
+class VentaListView(ListView):
+    model = Venta
+    template_name = 'ventas/venta_list.html'
+    context_object_name = 'ventas'
+
+# Detalle de una venta
+class VentaDetailView(DetailView):
+    model = Venta
+    template_name = 'ventas/venta_detail.html'
+    context_object_name = 'venta'
+
+# Crear nueva venta con productos
+
+class VentaCreateView(CreateView):
+    model = Venta
+    template_name = 'ventas/venta_form.html'
+    fields = ['cliente', 'metodo_pago']  # Campos que el usuario podrá llenar en el formulario
+    success_url = reverse_lazy('venta_list')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # Filtrar los productos disponibles en stock (cantidad mayor que 0)
+        productos_en_stock = Producto.objects.filter(cantidad__gt=0)
+        context['productos'] = productos_en_stock
+        return context
+
+    def form_valid(self, form):
+        # Asignar automáticamente el vendedor logueado
+        form.instance.vendedor = self.request.user
+        venta = form.save()
+
+        # Si hay productos seleccionados, agregar detalles
+        productos = self.request.POST.getlist('producto')
+        cantidades = self.request.POST.getlist('cantidad')
+        precios = self.request.POST.getlist('precio_unitario')
+
+        for producto_id, cantidad, precio in zip(productos, cantidades, precios):
+            producto = Producto.objects.get(id=producto_id)
+            detalle = DetalleVenta(
+                venta=venta,
+                producto=producto,
+                cantidad=int(cantidad),
+                precio_unitario=precio
+            )
+            detalle.save()
+
+        # Calcular el total de la venta
+        venta.calcular_total()
+        
+        return redirect('venta_list')
+# Editar venta
+class VentaUpdateView(UpdateView):
+    model = Venta
+    template_name = 'ventas/venta_form.html'
+    fields = ['cliente', 'metodo_pago', 'total_venta']  # Actualiza estos campos según sea necesario
+    success_url = reverse_lazy('venta_list')
+
+# Eliminar venta
+class VentaDeleteView(DeleteView):
+    model = Venta
+    template_name = 'ventas/venta_confirm_delete.html'
+    success_url = reverse_lazy('venta_list')
+
+# Crear detalle de venta
+class DetalleVentaCreateView(CreateView):
+    model = DetalleVenta
+    template_name = 'ventas/detalle_venta_form.html'
+    fields = ['venta', 'producto', 'cantidad', 'precio_unitario']
+    success_url = reverse_lazy('venta_list')
+
+    def form_valid(self, form):
+        # Calcular subtotal y actualizar el stock del producto
+        form.instance.subtotal = form.instance.cantidad * form.instance.precio_unitario
+        form.instance.producto.actualizar_stock(form.instance.cantidad)
+        return super().form_valid(form)

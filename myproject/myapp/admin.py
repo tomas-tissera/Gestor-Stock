@@ -17,3 +17,4 @@ class ProductoAdmin(admin.ModelAdmin):
 class ClienteAdmin(admin.ModelAdmin):
     list_display = ('nombre', 'email', 'telefono', 'estatus', 'fecha_registro')
     search_fields = ('nombre', 'email', 'telefono')
+    

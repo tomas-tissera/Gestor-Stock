@@ -2,7 +2,7 @@
 from django.urls import path
 from . import views
 from django.contrib.auth.views import LogoutView
-from .views import CustomLoginView
+from .views import *
 
 urlpatterns = [
     
@@ -37,4 +37,11 @@ urlpatterns = [
     path('clientes/<int:pk>/editar/', views.ClienteUpdateView.as_view(), name='clientes_update'),
     path('clientes/<int:pk>/eliminar/', views.ClienteDeleteView.as_view(), name='clientes_delete'),
 
+
+    # Ventas
+    path('ventas/', VentaListView.as_view(), name='venta_list'),
+    path('ventas/<int:pk>/', VentaDetailView.as_view(), name='venta_detail'),
+    path('ventas/nuevo/', VentaCreateView.as_view(), name='venta_create'),
+    path('ventas/<int:pk>/editar/', VentaUpdateView.as_view(), name='venta_edit'),
+    path('ventas/<int:pk>/eliminar/', VentaDeleteView.as_view(), name='venta_delete'),
 ]

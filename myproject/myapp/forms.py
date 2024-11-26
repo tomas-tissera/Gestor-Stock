@@ -1,7 +1,7 @@
 # forms.py
 from django import forms
 from django.contrib.auth.models import User
-from .models import Empleados , Categoria, Producto , Cliente
+from .models import Empleados , Categoria, Producto , Cliente , Venta, DetalleVenta
 
 class EmpleadoForm(forms.ModelForm):
     class Meta:
@@ -29,3 +29,13 @@ class ClienteForm(forms.ModelForm):
     class Meta:
         model = Cliente
         fields = ['nombre', 'compania', 'email', 'telefono', 'direccion', 'estatus', 'notas']
+
+class VentaForm(forms.ModelForm):
+    class Meta:
+        model = Venta
+        fields = ['cliente', 'metodo_pago']
+
+class DetalleVentaForm(forms.ModelForm):
+    class Meta:
+        model = DetalleVenta
+        fields = ['producto', 'cantidad', 'precio_unitario']

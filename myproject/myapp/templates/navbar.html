@@ -23,7 +23,7 @@
                     <a class="nav-link" href="{% url 'clientes_list' %}">Clientes</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">Ventas</a>
+                    <a class="nav-link" href="{% url 'venta_list' %}">Ventas</a>
                 </li>
                 <!-- Mostrar según el rol del usuario -->
                 {% if role == 'Empleados' %}

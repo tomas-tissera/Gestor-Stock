@@ -1,0 +1,48 @@
+{% extends '../base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1>Detalles de la Venta</h1>
+    
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5>Venta #{{ venta.id }} - Cliente: {{ venta.cliente.nombre }}</h5>
+        </div>
+        <div class="card-body">
+            <p><strong>Fecha de venta:</strong> {{ venta.fecha_venta }}</p>
+            <p><strong>Vendedor:</strong> {{ venta.vendedor.get_full_name }}</p>
+            
+            <h4>Productos Comprados</h4>
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Producto</th>
+                        <th>Cantidad</th>
+                        <th>Precio Unitario</th>
+                        <th>Subtotal</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for detalle in venta.detalleventa_set.all %}
+                    <tr>
+                        <td>{{ detalle.producto.titulo }}</td>
+                        <td>{{ detalle.cantidad }}</td>
+                        <td>${{ detalle.precio_unitario }}</td>
+                        <td>${{ detalle.subtotal }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            <div class="mt-4">
+                <h4>Total: ${{ venta.total_venta  }}</h4>
+            </div>
+        </div>
+    </div>
+
+    <div class="text-center mt-4">
+        <a href="{% url 'producto_list' %}" class="btn btn-primary">Volver a Productos</a>
+        <a href="{% url 'venta_list' %}" class="btn btn-secondary">Volver a Ventas</a>
+    </div>
+</div>
+{% endblock %}
