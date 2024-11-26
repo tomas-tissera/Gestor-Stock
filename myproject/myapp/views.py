@@ -56,7 +56,7 @@ def gestion_empleados(request):
     # Filtrar los empleados que están en el grupo 'Empleados'
     empleados = Empleados.objects.all()
 
-    return render(request, 'empleados_gestion.html', {'empleados': empleados})
+    return render(request, 'empleados/empleados_gestion.html', {'empleados': empleados})
 
 
 @login_required
@@ -95,7 +95,7 @@ def editar_empleado(request, id):
             return redirect('gestion_empleados')  # Redirigir a la vista de gestión de empleados
     else:
         form = EmpleadoForm(instance=empleado)  # Prellenar el formulario con los datos del empleado
-    return render(request, 'empleado_form.html', {'form': form})
+    return render(request, 'empleados/empleado_form.html', {'form': form})
 # Vista para eliminar un empleado
 def eliminar_empleado(request, id):
     empleado = get_object_or_404(Empleados, id=id)  # Obtén el empleado por ID
@@ -107,63 +107,63 @@ def eliminar_empleado(request, id):
 # Listar categorías
 class CategoriaListView(ListView):
     model = Categoria
-    template_name = "categoria_list.html"
+    template_name = "categorias/categoria_list.html"
     context_object_name = "categorias"
 
 # Detalle de una categoría (opcional)
 class CategoriaDetailView(DetailView):
     model = Categoria
-    template_name = "categoria_detail.html"
+    template_name = "categorias/categoria_detail.html"
     context_object_name = "categoria"
 
 # Crear categoría
 class CategoriaCreateView(CreateView):
     model = Categoria
-    template_name = "categoria_form.html"
+    template_name = "categorias/categoria_form.html"
     fields = ['nombre', 'descripcion']
     success_url = reverse_lazy('categoria_list')
 
 # Editar categoría
 class CategoriaUpdateView(UpdateView):
     model = Categoria
-    template_name = "categoria_form.html"
+    template_name = "categorias/categoria_form.html"
     fields = ['nombre', 'descripcion']
     success_url = reverse_lazy('categoria_list')
 
 # Eliminar categoría
 class CategoriaDeleteView(DeleteView):
     model = Categoria
-    template_name = "categoria_confirm_delete.html"
+    template_name = "categorias/categoria_confirm_delete.html"
     success_url = reverse_lazy('categoria_list')
 
 # Listar productos
 class ProductoListView(ListView):
     model = Producto
-    template_name = "producto_list.html"
+    template_name = "productos/producto_list.html"
     context_object_name = "productos"
 
 # Detalle de un producto
 class ProductoDetailView(DetailView):
     model = Producto
-    template_name = "producto_detail.html"
+    template_name = "productos/producto_detail.html"
     context_object_name = "producto"
 
 # Crear producto
 class ProductoCreateView(CreateView):
     model = Producto
-    template_name = "producto_form.html"
+    template_name = "productos/producto_form.html"
     fields = ['titulo', 'descripcion', 'precio', 'cantidad', 'categoria']
     success_url = reverse_lazy('producto_list')
 
 # Editar producto
 class ProductoUpdateView(UpdateView):
     model = Producto
-    template_name = "producto_form.html"
+    template_name = "productos/producto_form.html"
     fields = ['titulo', 'descripcion', 'precio', 'cantidad', 'categoria']
     success_url = reverse_lazy('producto_list')
 
 # Eliminar producto
 class ProductoDeleteView(DeleteView):
     model = Producto
-    template_name = "producto_confirm_delete.html"
+    template_name = "productos/producto_confirm_delete.html"
     success_url = reverse_lazy('producto_list')
