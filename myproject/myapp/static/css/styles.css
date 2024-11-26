@@ -140,3 +140,523 @@ body {
         margin: 10px 0;
     }
 }
+
+
+/* Editar datos de empleado */
+
+
+/* Formulario Principal */
+
+.employee-form {
+    background-color: #e0e0e0;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    max-width: 600px;
+    margin: 0 auto;
+    font-family: 'Arial', sans-serif;
+}
+
+
+/* Etiquetas de los Campos */
+
+.employee-form label {
+    display: block;
+    font-weight: bold;
+    font-size: 1rem;
+    margin-bottom: 8px;
+    color: #333;
+}
+
+
+/* Estilos para los Campos de Entrada */
+
+.employee-form input[type="text"],
+.employee-form input[type="email"],
+.employee-form input[type="password"],
+.employee-form input[type="number"],
+.employee-form input[type="date"],
+.employee-form select,
+.employee-form textarea {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    font-size: 1rem;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+
+/* Hover y Focus en Campos */
+
+.employee-form input:focus,
+.employee-form select:focus,
+.employee-form textarea:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+    outline: none;
+}
+
+
+/* Textareas */
+
+.employee-form textarea {
+    resize: vertical;
+    min-height: 100px;
+}
+
+
+/* Botones */
+
+.employee-form button[type="submit"] {
+    width: 100%;
+    padding: 12px;
+    font-size: 1rem;
+    font-weight: bold;
+    color: #ffffff;
+    background-color: #28a745;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.employee-form button[type="submit"]:hover {
+    background-color: #218838;
+    transform: scale(1.03);
+}
+
+.employee-form button[type="submit"]:focus {
+    outline: none;
+    box-shadow: 0 0 5px rgba(40, 167, 69, 0.5);
+}
+
+
+/* Estilo de Mensajes de Error */
+
+.employee-form .error-message {
+    color: #d9534f;
+    font-size: 0.9rem;
+    margin-top: -10px;
+    margin-bottom: 10px;
+}
+
+
+/* Estilo de Mensajes de Éxito */
+
+.employee-form .success-message {
+    color: #28a745;
+    font-size: 1rem;
+    margin-bottom: 10px;
+}
+
+
+/* Títulos */
+
+.employee-form h1 {
+    text-align: center;
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+
+/* Ajustes para Pantallas Pequeñas */
+
+@media (max-width: 768px) {
+    .employee-form {
+        padding: 15px;
+        box-shadow: none;
+    }
+    .employee-form h1 {
+        font-size: 1.5rem;
+    }
+    .employee-form button[type="submit"] {
+        font-size: 0.9rem;
+    }
+}
+
+
+/* Categoria  */
+
+
+/* Formulario de Categorías */
+
+.category-form {
+    background-color: #e0e0e0;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    max-width: 600px;
+    margin: 20px auto;
+    font-family: 'Arial', sans-serif;
+}
+
+
+/* Encabezado del Formulario */
+
+.category-form h1 {
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: #333;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+
+/* Etiquetas de los Campos */
+
+.category-form label {
+    font-weight: bold;
+    font-size: 1rem;
+    margin-bottom: 8px;
+    display: block;
+    color: #555;
+}
+
+
+/* Campos de Entrada */
+
+.category-form input[type="text"],
+.category-form textarea {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    font-size: 1rem;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+
+/* Hover y Focus en Campos */
+
+.category-form input:focus,
+.category-form textarea:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+    outline: none;
+}
+
+
+/* Botones */
+
+.category-form button[type="submit"],
+.category-form a.btn-secondary {
+    display: inline-block;
+    width: 48%;
+    padding: 12px;
+    font-size: 1rem;
+    font-weight: bold;
+    text-align: center;
+    border-radius: 4px;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.category-form button[type="submit"] {
+    background-color: #28a745;
+    color: #ffffff;
+    border: none;
+}
+
+.category-form button[type="submit"]:hover {
+    background-color: #218838;
+    transform: scale(1.03);
+}
+
+.category-form a.btn-secondary {
+    background-color: #6c757d;
+    color: #ffffff;
+    text-decoration: none;
+    line-height: 1.5;
+}
+
+.category-form a.btn-secondary:hover {
+    background-color: #5a6268;
+    transform: scale(1.03);
+}
+
+
+/* Ajustes de Botones para Pantallas Pequeñas */
+
+.category-form button[type="submit"],
+.category-form a.btn-secondary {
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+
+/* Ajustes para Pantallas Pequeñas */
+
+@media (max-width: 768px) {
+    .category-form {
+        padding: 15px;
+        box-shadow: none;
+    }
+    .category-form h1 {
+        font-size: 1.5rem;
+    }
+    .category-form button[type="submit"],
+    .category-form a.btn-secondary {
+        font-size: 0.9rem;
+    }
+}
+
+
+/* Formulario de Categorías */
+
+.category-form {
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    max-width: 600px;
+    margin: 20px auto;
+    font-family: 'Arial', sans-serif;
+}
+
+
+/* Encabezado del Formulario */
+
+.category-form h1 {
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: #333;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+
+/* Etiquetas de los Campos */
+
+.category-form label {
+    font-weight: bold;
+    font-size: 1rem;
+    margin-bottom: 8px;
+    display: block;
+    color: #555;
+}
+
+
+/* Campos de Entrada */
+
+.category-form input[type="text"],
+.category-form textarea {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    font-size: 1rem;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+
+/* Hover y Focus en Campos */
+
+.category-form input:focus,
+.category-form textarea:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+    outline: none;
+}
+
+
+/* Botones */
+
+.category-form button[type="submit"],
+.category-form a.btn-secondary {
+    display: inline-block;
+    width: 48%;
+    padding: 12px;
+    font-size: 1rem;
+    font-weight: bold;
+    text-align: center;
+    border-radius: 4px;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.category-form button[type="submit"] {
+    background-color: #28a745;
+    color: #ffffff;
+    border: none;
+}
+
+.category-form button[type="submit"]:hover {
+    background-color: #218838;
+    transform: scale(1.03);
+}
+
+.category-form a.btn-secondary {
+    background-color: #6c757d;
+    color: #ffffff;
+    text-decoration: none;
+    line-height: 1.5;
+}
+
+.category-form a.btn-secondary:hover {
+    background-color: #5a6268;
+    transform: scale(1.03);
+}
+
+
+/* Ajustes de Botones para Pantallas Pequeñas */
+
+.category-form button[type="submit"],
+.category-form a.btn-secondary {
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+
+/* Ajustes para Pantallas Pequeñas */
+
+@media (max-width: 768px) {
+    .category-form {
+        padding: 15px;
+        box-shadow: none;
+    }
+    .category-form h1 {
+        font-size: 1.5rem;
+    }
+    .category-form button[type="submit"],
+    .category-form a.btn-secondary {
+        font-size: 0.9rem;
+    }
+}
+
+
+/* Producto */
+
+
+/* Formulario de Productos */
+
+.product-form {
+    background-color: #e0e0e0;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    max-width: 600px;
+    margin: 20px auto;
+    font-family: 'Arial', sans-serif;
+}
+
+
+/* Encabezado del Formulario */
+
+.product-form h1 {
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: #333;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+
+/* Etiquetas de los Campos */
+
+.product-form label {
+    font-weight: bold;
+    font-size: 1rem;
+    margin-bottom: 8px;
+    display: block;
+    color: #555;
+}
+
+
+/* Campos de Entrada */
+
+.product-form input,
+.product-form textarea,
+.product-form select {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    font-size: 1rem;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+
+/* Hover y Focus en Campos */
+
+.product-form input:focus,
+.product-form textarea:focus,
+.product-form select:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+    outline: none;
+}
+
+
+/* Botones */
+
+.product-form button[type="submit"],
+.product-form a.btn-secondary {
+    display: inline-block;
+    width: 48%;
+    padding: 12px;
+    font-size: 1rem;
+    font-weight: bold;
+    text-align: center;
+    border-radius: 4px;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.product-form button[type="submit"] {
+    background-color: #28a745;
+    color: #ffffff;
+    border: none;
+}
+
+.product-form button[type="submit"]:hover {
+    background-color: #218838;
+    transform: scale(1.03);
+}
+
+.product-form a.btn-secondary {
+    background-color: #6c757d;
+    color: #ffffff;
+    text-decoration: none;
+    line-height: 1.5;
+}
+
+.product-form a.btn-secondary:hover {
+    background-color: #5a6268;
+    transform: scale(1.03);
+}
+
+
+/* Ajustes de Botones para Pantallas Pequeñas */
+
+.product-form button[type="submit"],
+.product-form a.btn-secondary {
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+
+/* Ajustes para Pantallas Pequeñas */
+
+@media (max-width: 768px) {
+    .product-form {
+        padding: 15px;
+        box-shadow: none;
+    }
+    .product-form h1 {
+        font-size: 1.5rem;
+    }
+    .product-form button[type="submit"],
+    .product-form a.btn-secondary {
+        font-size: 0.9rem;
+    }
+}

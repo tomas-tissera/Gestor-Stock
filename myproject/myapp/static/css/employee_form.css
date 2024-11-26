@@ -1,0 +1,80 @@
+/* Contenedor principal */
+
+.container {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+
+/* Estilo del formulario */
+
+.employee-form {
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+
+/* Margen entre grupos de formulario */
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+
+/* Etiquetas del formulario */
+
+.form-group label {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #333;
+}
+
+
+/* Campos del formulario */
+
+.form-control {
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    padding: 10px;
+    font-size: 1rem;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.form-control:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+
+/* Botón */
+
+.btn-success {
+    background-color: #28a745;
+    border: none;
+    color: white;
+    font-size: 1rem;
+    padding: 12px;
+    border-radius: 4px;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.btn-success:hover {
+    background-color: #218838;
+    transform: scale(1.02);
+}
+
+.btn-success:focus {
+    outline: none;
+    box-shadow: 0 0 5px rgba(40, 167, 69, 0.5);
+}
+
+
+/* Títulos */
+
+h1 {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #333;
+}
