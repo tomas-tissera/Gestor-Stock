@@ -46,3 +46,26 @@ class Producto(models.Model):
 
     def __str__(self):
         return self.titulo  # Representación del título en el panel de administración
+
+class Cliente(models.Model):
+    nombre = models.CharField(max_length=255, verbose_name='Nombre Completo')
+    compania = models.CharField(max_length=255, blank=True, null=True, verbose_name='Compañía')
+    email = models.EmailField(unique=True, verbose_name='Correo Electrónico')
+    telefono = models.CharField(max_length=15, verbose_name='Número de Teléfono')
+    direccion = models.TextField(blank=True, null=True, verbose_name='Dirección')
+    fecha_registro = models.DateTimeField(auto_now_add=True, verbose_name='Fecha de Registro')
+    estatus = models.CharField(
+        max_length=20, 
+        choices=[('activo', 'Activo'), ('inactivo', 'Inactivo')], 
+        default='activo', 
+        verbose_name='Estatus'
+    )
+    notas = models.TextField(blank=True, null=True, verbose_name='Notas Adicionales')
+    
+    def __str__(self):
+        return f'{self.nombre} - {self.email}'
+
+    class Meta:
+        verbose_name = 'Cliente'
+        verbose_name_plural = 'Clientes'
+        ordering = ['-fecha_registro']

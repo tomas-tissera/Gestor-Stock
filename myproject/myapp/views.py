@@ -4,7 +4,7 @@ from django.contrib.auth.models import Group
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LoginView
 from django.urls import reverse_lazy
-from .models import Empleados , Producto, Categoria
+from .models import Empleados , Producto, Categoria , Cliente
 from .forms import EmpleadoForm  # Asegúrate de que tienes un formulario para crear empleados
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
@@ -167,3 +167,36 @@ class ProductoDeleteView(DeleteView):
     model = Producto
     template_name = "productos/producto_confirm_delete.html"
     success_url = reverse_lazy('producto_list')
+
+
+# Listar clientes
+class ClienteListView(ListView):
+    model = Cliente
+    template_name = "clientes/cliente_list.html"
+    context_object_name = "clientes"
+
+# Detalle de un producto
+class ClienteDetailView(DetailView):
+    model = Cliente
+    template_name = "clientes/cliente_detail.html"
+    context_object_name = "producto"
+
+# Crear producto
+class ClienteCreateView(CreateView):
+    model = Cliente
+    template_name = "clientes/cliente_form.html"
+    fields = ['nombre', 'compania', 'email', 'telefono', 'direccion', 'estatus', 'notas']
+    success_url = reverse_lazy('clientes_list')
+
+# Editar producto
+class ClienteUpdateView(UpdateView):
+    model = Cliente
+    template_name = "clientes/cliente_form.html"
+    fields = ['nombre', 'compania', 'email', 'telefono', 'direccion', 'estatus', 'notas']
+    success_url = reverse_lazy('clientes_list')
+
+# Eliminar producto
+class ClienteDeleteView(DeleteView):
+    model = Cliente
+    template_name = "clientes/cliente_confirm_delete.html"
+    success_url = reverse_lazy('clientes_list')
