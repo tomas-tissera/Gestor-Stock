@@ -109,6 +109,16 @@ class CategoriaListView(ListView):
     template_name = "categorias/categoria_list.html"
     context_object_name = "categorias"
 
+    def get_queryset(self):
+        # Obtener el término de búsqueda desde la URL (GET)
+        search_query = self.request.GET.get('q', '')
+
+        if search_query:
+            # Filtrar las categorías que contengan el término de búsqueda en su nombre
+            return Categoria.objects.filter(nombre__icontains=search_query)
+        else:
+            # Si no hay búsqueda, retornar todas las categorías
+            return Categoria.objects.all()
 # Detalle de una categoría (opcional)
 class CategoriaDetailView(DetailView):
     model = Categoria
@@ -141,6 +151,17 @@ class ProductoListView(ListView):
     template_name = "productos/producto_list.html"
     context_object_name = "productos"
 
+    def get_queryset(self):
+        queryset = super().get_queryset()
+
+        # Obtener el parámetro de búsqueda desde la URL
+        query = self.request.GET.get('q')
+
+        # Si hay un término de búsqueda, filtrar los productos por el nombre (titulo)
+        if query:
+            queryset = queryset.filter(titulo__icontains=query)  # Filtra productos cuyo título contenga la cadena
+
+        return queryset
 # Detalle de un producto
 class ProductoDetailView(DetailView):
     model = Producto
@@ -173,7 +194,7 @@ class ClienteListView(ListView):
     model = Cliente
     template_name = "clientes/cliente_list.html"
     context_object_name = "clientes"
-
+    
 # Detalle de un producto
 class ClienteDetailView(DetailView):
     model = Cliente
@@ -210,17 +231,13 @@ class VentaListView(ListView):
 
     def get_queryset(self):
         return Venta.objects.all()  # Asegúrate de que las ventas tengan un vendedor asignado
-
-
 # Detalle de una venta
 # views.py
 class VentaDetailView(DetailView):
     model = Venta
     template_name = 'ventas/venta_detail.html'
     context_object_name = 'venta'
-
 # Crear nueva venta con productos
-
 class VentaCreateView(CreateView):
     model = Venta
     template_name = 'ventas/venta_form.html'
@@ -261,7 +278,6 @@ class VentaCreateView(CreateView):
 
         venta.calcular_total()
         return redirect(self.success_url)
-
 class VentaUpdateView(UpdateView):
     model = Venta
     template_name = 'ventas/venta_form.html'
@@ -280,7 +296,6 @@ class VentaDeleteView(DeleteView):
     model = Venta
     template_name = 'ventas/venta_confirm_delete.html'
     success_url = reverse_lazy('venta_list')
-
 # Crear detalle de venta
 class DetalleVentaCreateView(CreateView):
     model = DetalleVenta

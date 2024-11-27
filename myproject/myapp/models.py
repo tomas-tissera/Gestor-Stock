@@ -26,7 +26,7 @@ class Empleados(models.Model):
 
 
 class Categoria(models.Model):
-    nombre = models.CharField(max_length=100, unique=True)  # Nombre único para evitar duplicados
+    nombre = models.CharField(max_length=100)  # Nombre único para evitar duplicados
     descripcion = models.TextField(blank=True, null=True)  # Descripción opcional de la categoría
 
     def __str__(self):

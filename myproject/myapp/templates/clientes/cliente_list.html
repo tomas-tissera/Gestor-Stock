@@ -3,7 +3,29 @@
 {% block content %}
 <div class="container mt-4">
     <h1>Lista de Clientes</h1>
+
+    <!-- Formulario de búsqueda -->
+    <form method="get" action="{% url 'clientes_list' %}" class="d-flex mb-4">
+        <div class="input-group">
+            <!-- Campo de búsqueda -->
+            <input type="text" name="q" class="form-control" placeholder="Buscar producto..." value="{{ request.GET.q }}">
+            
+            <!-- Botón de búsqueda con ícono de lupa -->
+            <div class="input-group-append">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-search"></i> <!-- Ícono de lupa -->
+                </button>
+            </div>
+        </div>
+
+        <!-- Botón de cancelar búsqueda (cruz) -->
+        <a href="{% url 'producto_list' %}" class="btn btn-danger ml-2">
+            <i class="fas fa-times"></i> <!-- Cruz para cancelar búsqueda -->
+        </a>
+    </form>
+    
     <a href="{% url 'clientes_create' %}" class="btn btn-primary mb-4">Crear Cliente</a>
+    
     <table class="table table-bordered">
         <thead>
             <tr>

@@ -3,7 +3,31 @@
 {% block content %}
 <div class="container mt-4">
     <h1>Listado de Categorías</h1>
+
+    <!-- Formulario de búsqueda con distribución mejorada -->
+    <form method="get" class="form-inline mb-3 d-flex align-items-center">
+        <div class="input-group">
+            <!-- Campo de búsqueda -->
+            <input type="text" name="q" class="form-control" placeholder="Buscar categoría..." value="{{ request.GET.q }}">
+            
+            <!-- Botón de búsqueda con ícono de lupa -->
+            <div class="input-group-append">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-search"></i> <!-- Ícono de lupa -->
+                </button>
+            </div>
+        </div>
+
+        <!-- Botón de cancelar búsqueda (cruz) -->
+        <a href="{% url 'categoria_list' %}" class="btn btn-danger ml-2">
+            <i class="fas fa-times"></i> <!-- Cruz para cancelar búsqueda -->
+        </a>
+    </form>
+
+    <!-- Botón para crear nueva categoría -->
     <a href="{% url 'categoria_create' %}" class="btn btn-primary mb-3">Crear Nueva Categoría</a>
+
+    <!-- Tabla de categorías -->
     <table class="table table-bordered">
         <thead>
             <tr>
