@@ -12,68 +12,41 @@
         {% csrf_token %}
         {{ form.as_p }}
         {% if object %}
-        <h3>Productos Vendidos</h3>
-        <div id="productos">
-            {% for detalle in detalles %}
-                <div class="producto-item">
-                    <label for="producto">Producto</label>
-                    <select name="producto_{{ forloop.counter0 }}" class="form-control producto" data-index="{{ forloop.counter0 }}">
-                        <option value="">Seleccione un producto</option>
-                        {% for producto in productos %}
-                            <option value="{{ producto.id }}" data-precio="{{ producto.precio }}" 
-                                    {% if producto.id == detalle.producto.id %}selected{% endif %}>
-                                {{ producto.titulo }} (Stock: {{ producto.cantidad }})
-                            </option>
-                        {% endfor %}
-                    </select>
-                    
-                    <label for="cantidad">Cantidad</label>
-                    <input type="number" name="cantidad_{{ forloop.counter0 }}" class="form-control" value="{{ detalle.cantidad }}" required min="1">
-                    
-                    <label for="precio_unitario">Precio Unitario</label>
-                    <input type="number" name="precio_unitario_{{ forloop.counter0 }}" class="form-control precio_unitario" step="0.01" 
-                           value="{{ detalle.precio_unitario }}" required readonly>
-                    
-                    <br>
-                </div>
-            {% endfor %}
-        </div>
-        
-        <button type="button" id="agregarProducto" class="btn btn-primary">Agregar otro producto</button>
+            Editar Venta
         {% else %}
-            <h3>Agregar Productos</h3>
-            <div id="productos">
-                <div class="producto-item">
-                    <label for="producto">Producto</label>
-                    <select name="producto_0" class="form-control producto" data-index="0">
-                        <option value="">Seleccione un producto</option>
-                        {% for producto in productos %}
-                            <option value="{{ producto.id }}" data-precio="{{ producto.precio }}">{{ producto.titulo }} (Stock: {{ producto.cantidad }})</option>
-                        {% endfor %}
-                    </select>
+        <h3>Agregar Productos</h3>
+        <div id="productos">
+            <div class="producto-item">
+                <label for="producto">Producto</label>
+                <select name="producto_0" class="form-control producto" data-index="0">
+                    <option value="">Seleccione un producto</option>
+                    {% for producto in productos %}
+                        <option value="{{ producto.id }}" data-precio="{{ producto.precio }}">{{ producto.titulo }} (Stock: {{ producto.cantidad }})</option>
+                    {% endfor %}
+                </select>
 
-                    <label for="cantidad">Cantidad</label>
-                    <input 
-                        type="number" 
-                        name="cantidad_0" 
-                        class="form-control" 
-                        value="1" 
-                        required 
-                        min="1" 
-                        max="{{ producto.cantidad }}">
-                        {% comment %} <!-- Agregamos el máximo según el stock disponible -->> {% endcomment %}
-                    <label for="precio_unitario">Precio Unitario</label>
-                    <input type="number" name="precio_unitario_0" class="form-control precio_unitario" step="0.01" required readonly>
-                    <br>
-                </div>
+                <label for="cantidad">Cantidad</label>
+                <input 
+                    type="number" 
+                    name="cantidad_0" 
+                    class="form-control" 
+                    value="1" 
+                    required 
+                    min="1" 
+                    max="{{ producto.cantidad }}">
+                     {% comment %} <!-- Agregamos el máximo según el stock disponible -->> {% endcomment %}
+                <label for="precio_unitario">Precio Unitario</label>
+                <input type="number" name="precio_unitario_0" class="form-control precio_unitario" step="0.01" required readonly>
+                <br>
             </div>
+        </div>
 
-            <button type="button" id="agregarProducto" class="btn btn-primary">Agregar otro producto</button>
-            <br><br>
+        <button type="button" id="agregarProducto" class="btn btn-primary">Agregar otro producto</button>
+        <br><br>
 
-            <button type="submit" class="btn btn-success">Guardar</button>
-            <a href="{% url 'venta_list' %}" class="btn btn-secondary">Cancelar</a>
-        </form>
+        <button type="submit" class="btn btn-success">Guardar</button>
+        <a href="{% url 'venta_list' %}" class="btn btn-secondary">Cancelar</a>
+    </form>
         {% endif %}
         
 </div>

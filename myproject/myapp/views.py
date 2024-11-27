@@ -270,8 +270,11 @@ class VentaUpdateView(UpdateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        productos_en_stock = Producto.objects.filter(cantidad__gt=0)
-        context['productos'] = productos_en_stock
+        # Obtener la venta que estamos editando
+        venta = self.get_object()
+        # Obtener los detalles de esa venta
+        detalles = DetalleVenta.objects.filter(venta=venta)
+        context['detalles'] = detalles
         return context
 class VentaDeleteView(DeleteView):
     model = Venta
@@ -286,9 +289,57 @@ class DetalleVentaCreateView(CreateView):
     success_url = reverse_lazy('venta_list')
 
     def form_valid(self, form):
-        # Calcular subtotal y actualizar el stock del producto
-        form.instance.subtotal = form.instance.cantidad * form.instance.precio_unitario
-        form.instance.producto.actualizar_stock(form.instance.cantidad)
-        return super().form_valid(form)
-    
-    
+        if not form.is_valid():
+            # Imprimir los errores del formulario si no es válido
+            print(form.errors)
+            return self.form_invalid(form)
+
+        # Guardar la venta
+        venta = form.save()
+
+        # Asegúrate de que la venta se ha guardado correctamente
+        if not venta:
+            form.add_error(None, "No se pudo guardar la venta.")
+            return self.form_invalid(form)
+
+        # Procesar los productos, cantidades y precios
+        productos = []
+        cantidades = []
+        precios = []
+
+        for key, value in self.request.POST.items():
+            if key.startswith('producto_'):
+                productos.append(value)
+            elif key.startswith('cantidad_'):
+                cantidades.append(value)
+            elif key.startswith('precio_unitario_'):
+                precios.append(value)
+
+        try:
+            # Guardar los detalles de la venta
+            for producto_id, cantidad, precio in zip(productos, cantidades, precios):
+                if producto_id:
+                    producto = Producto.objects.get(id=producto_id)
+                    if producto.cantidad >= int(cantidad):
+                        detalle = DetalleVenta(
+                            venta=venta,
+                            producto=producto,
+                            cantidad=int(cantidad),
+                            precio_unitario=float(precio),
+                        )
+                        detalle.save()
+
+                        # Actualizar el stock del producto
+                        producto.actualizar_stock(int(cantidad))
+                    else:
+                        form.add_error(None, f"No hay suficiente stock para el producto: {producto.titulo}")
+                        return self.form_invalid(form)
+
+            # Calcular el total de la venta
+            venta.calcular_total()
+
+        except ValueError as e:
+            form.add_error(None, str(e))
+            return self.form_invalid(form)
+
+        return redirect(self.success_url)
