@@ -1,91 +1,136 @@
 {% extends 'base.html' %}
-
 {% block content %}
-  <div class="container mt-4">
-    <h1>{% if object %}Editar Venta{% else %}Crear Nueva Venta{% endif %}</h1>
+<div class="container mt-4">
+    <h1>
+        {% if object %}
+            Editar Venta
+        {% else %}
+            Crear Nueva Venta
+        {% endif %}
+    </h1>
     <form method="post">
         {% csrf_token %}
         {{ form.as_p }}
-
-        <h3>Agregar Productos</h3>
+        {% if object %}
+        <h3>Productos Vendidos</h3>
         <div id="productos">
-            <div class="producto-item">
-                <label for="producto">Producto</label>
-                <select name="producto_0" class="form-control producto" data-index="0">
-                    <option value="">Seleccione un producto</option>
-                    {% for producto in productos %}
-                        <option value="{{ producto.id }}" data-precio="{{ producto.precio }}">{{ producto.titulo }} (Stock: {{ producto.cantidad }})</option>
-                    {% endfor %}
-                </select>
-                
-                <label for="cantidad">Cantidad</label>
-                <input type="number" name="cantidad_0" class="form-control" value="1" required min="1">
-                
-                <label for="precio_unitario">Precio Unitario</label>
-                <input type="number" name="precio_unitario_0" class="form-control precio_unitario" step="0.01" required readonly>
-                
-                <br>
-            </div>
+            {% for detalle in detalles %}
+                <div class="producto-item">
+                    <label for="producto">Producto</label>
+                    <select name="producto_{{ forloop.counter0 }}" class="form-control producto" data-index="{{ forloop.counter0 }}">
+                        <option value="">Seleccione un producto</option>
+                        {% for producto in productos %}
+                            <option value="{{ producto.id }}" data-precio="{{ producto.precio }}" 
+                                    {% if producto.id == detalle.producto.id %}selected{% endif %}>
+                                {{ producto.titulo }} (Stock: {{ producto.cantidad }})
+                            </option>
+                        {% endfor %}
+                    </select>
+                    
+                    <label for="cantidad">Cantidad</label>
+                    <input type="number" name="cantidad_{{ forloop.counter0 }}" class="form-control" value="{{ detalle.cantidad }}" required min="1">
+                    
+                    <label for="precio_unitario">Precio Unitario</label>
+                    <input type="number" name="precio_unitario_{{ forloop.counter0 }}" class="form-control precio_unitario" step="0.01" 
+                           value="{{ detalle.precio_unitario }}" required readonly>
+                    
+                    <br>
+                </div>
+            {% endfor %}
         </div>
-
-        <button type="button" id="agregarProducto" class="btn btn-primary">Agregar otro producto</button>
-        <br><br>
         
-        <button type="submit" class="btn btn-success">Guardar</button>
-        <a href="{% url 'venta_list' %}" class="btn btn-secondary">Cancelar</a>
-    </form>
-  </div>
+        <button type="button" id="agregarProducto" class="btn btn-primary">Agregar otro producto</button>
+        {% else %}
+            <h3>Agregar Productos</h3>
+            <div id="productos">
+                <div class="producto-item">
+                    <label for="producto">Producto</label>
+                    <select name="producto_0" class="form-control producto" data-index="0">
+                        <option value="">Seleccione un producto</option>
+                        {% for producto in productos %}
+                            <option value="{{ producto.id }}" data-precio="{{ producto.precio }}">{{ producto.titulo }} (Stock: {{ producto.cantidad }})</option>
+                        {% endfor %}
+                    </select>
 
-  <script>
+                    <label for="cantidad">Cantidad</label>
+                    <input 
+                        type="number" 
+                        name="cantidad_0" 
+                        class="form-control" 
+                        value="1" 
+                        required 
+                        min="1" 
+                        max="{{ producto.cantidad }}">
+                        {% comment %} <!-- Agregamos el máximo según el stock disponible -->> {% endcomment %}
+                    <label for="precio_unitario">Precio Unitario</label>
+                    <input type="number" name="precio_unitario_0" class="form-control precio_unitario" step="0.01" required readonly>
+                    <br>
+                </div>
+            </div>
+
+            <button type="button" id="agregarProducto" class="btn btn-primary">Agregar otro producto</button>
+            <br><br>
+
+            <button type="submit" class="btn btn-success">Guardar</button>
+            <a href="{% url 'venta_list' %}" class="btn btn-secondary">Cancelar</a>
+        </form>
+        {% endif %}
+        
+</div>
+
+<script>
     let productoCount = 1;
 
-    // Función para actualizar el precio unitario
     function actualizarPrecioUnitario(event) {
         const selectProducto = event.target;
         const precioUnitarioInput = selectProducto.closest('.producto-item').querySelector('.precio_unitario');
-        
-        // Obtiene el precio del producto seleccionado
         const precio = selectProducto.selectedOptions[0].getAttribute('data-precio');
-        
-        // Actualiza el campo precio unitario con el valor obtenido
         if (precio) {
             precioUnitarioInput.value = precio;
         }
     }
 
-    // Agregar evento de cambio en los select de productos
     document.querySelectorAll('.producto').forEach(function(select) {
         select.addEventListener('change', actualizarPrecioUnitario);
     });
 
-    // Agregar un nuevo producto dinámicamente
     document.getElementById('agregarProducto').addEventListener('click', function() {
-        var productosContainer = document.getElementById('productos');
-        var productoItem = document.createElement('div');
+        const productosContainer = document.getElementById('productos');
+        const productoItem = document.createElement('div');
         productoItem.classList.add('producto-item');
-        
-        // Crear nuevos campos para producto, cantidad y precio
         productoItem.innerHTML = `
             <label for="producto">Producto</label>
             <select name="producto_${productoCount}" class="form-control producto" data-index="${productoCount}">
                 <option value="">Seleccione un producto</option>
                 {% for producto in productos %}
-                    <option value="{{ producto.id }}" data-precio="{{ producto.precio }}">{{ producto.titulo }} (Stock: {{ producto.cantidad }})</option>
+                    <option value="{{ producto.id }}" data-precio="{{ producto.precio }}" data-stock="{{ producto.cantidad }}">
+                        {{ producto.titulo }} (Stock: {{ producto.cantidad }})
+                    </option>
                 {% endfor %}
             </select>
             <label for="cantidad">Cantidad</label>
-            <input type="number" name="cantidad_${productoCount}" class="form-control" value="1" required min="1">
+            <input 
+                type="number" 
+                name="cantidad_${productoCount}" 
+                class="form-control cantidad" 
+                value="1" 
+                required 
+                min="1" 
+                max="">
             <label for="precio_unitario">Precio Unitario</label>
             <input type="number" name="precio_unitario_${productoCount}" class="form-control precio_unitario" step="0.01" required readonly>
             <br>
         `;
-        
         productosContainer.appendChild(productoItem);
-        
-        // Asignar evento a este nuevo select de producto
-        productoItem.querySelector('.producto').addEventListener('change', actualizarPrecioUnitario);
-        
-        productoCount++; // Incrementa el contador para los nuevos productos
+    
+        // Actualizamos el máximo según el stock seleccionado
+        productoItem.querySelector('.producto').addEventListener('change', function(event) {
+            const stock = this.selectedOptions[0].getAttribute('data-stock');
+            productoItem.querySelector('.cantidad').setAttribute('max', stock);
+        });
+    
+        productoCount++;
     });
-  </script>
+    
+</script>
 {% endblock %}

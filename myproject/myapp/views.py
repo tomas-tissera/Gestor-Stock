@@ -200,7 +200,7 @@ class ClienteDeleteView(DeleteView):
     template_name = "clientes/cliente_confirm_delete.html"
     success_url = reverse_lazy('clientes_list')
 
-
+#views.py
 #Venta
 # Listar todas las ventas
 class VentaListView(ListView):
@@ -224,55 +224,55 @@ class VentaDetailView(DetailView):
 class VentaCreateView(CreateView):
     model = Venta
     template_name = 'ventas/venta_form.html'
-    form_class = VentaForm  # Usamos el formulario personalizado
-
+    form_class = VentaForm
     success_url = reverse_lazy('venta_list')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        # Filtramos productos en stock (cantidad mayor que 0)
         productos_en_stock = Producto.objects.filter(cantidad__gt=0)
         context['productos'] = productos_en_stock
         return context
 
     def form_valid(self, form):
-        # Guardamos la venta y los detalles
         venta = form.save()
+        productos = []
+        cantidades = []
+        precios = []
 
-        # Si hay productos seleccionados, agregamos los detalles
-        productos = self.request.POST.getlist('producto')
-        cantidades = self.request.POST.getlist('cantidad')
-        precios = self.request.POST.getlist('precio_unitario')
+        # Procesar dinámicamente los campos del formulario
+        for key, value in self.request.POST.items():
+            if key.startswith('producto_'):
+                productos.append(value)
+            elif key.startswith('cantidad_'):
+                cantidades.append(value)
+            elif key.startswith('precio_unitario_'):
+                precios.append(value)
 
         for producto_id, cantidad, precio in zip(productos, cantidades, precios):
-            producto = Producto.objects.get(id=producto_id)
-            detalle = DetalleVenta(
-                venta=venta,
-                producto=producto,
-                cantidad=int(cantidad),
-                precio_unitario=precio
-            )
-            detalle.save()
+            if producto_id:  # Validar que el producto haya sido seleccionado
+                producto = Producto.objects.get(id=producto_id)
+                detalle = DetalleVenta(
+                    venta=venta,
+                    producto=producto,
+                    cantidad=int(cantidad),
+                    precio_unitario=float(precio),
+                )
+                detalle.save()
 
-        # Calculamos el total de la venta
         venta.calcular_total()
-
-        return redirect('venta_list')
+        return redirect(self.success_url)
 
 class VentaUpdateView(UpdateView):
     model = Venta
     template_name = 'ventas/venta_form.html'
-    form_class = VentaForm  # Asegúrate de usar el formulario con el campo 'vendedor'
+    form_class = VentaForm
     success_url = reverse_lazy('venta_list')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        # Filtramos productos en stock (cantidad mayor que 0)
         productos_en_stock = Producto.objects.filter(cantidad__gt=0)
         context['productos'] = productos_en_stock
         return context
-
-# Eliminar venta
 class VentaDeleteView(DeleteView):
     model = Venta
     template_name = 'ventas/venta_confirm_delete.html'

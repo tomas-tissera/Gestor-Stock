@@ -88,14 +88,12 @@ class Venta(models.Model):
     productos = models.ManyToManyField(Producto, through='DetalleVenta')
 
     def calcular_total(self):
-        # Calculamos el total sumando los subtotales de cada DetalleVenta
         total = sum(detalle.subtotal for detalle in self.detalleventa_set.all())
         self.total_venta = total
         self.save()
 
     def __str__(self):
         return f"Venta {self.id} - Cliente: {self.cliente}"
-
 
 class DetalleVenta(models.Model):
     venta = models.ForeignKey(Venta, on_delete=models.CASCADE)
@@ -107,6 +105,15 @@ class DetalleVenta(models.Model):
     def subtotal(self):
         return self.cantidad * self.precio_unitario
 
+    def save(self, *args, **kwargs):
+        # Validar stock antes de guardar
+        if self.producto.cantidad < self.cantidad:
+            raise ValueError(f"No hay suficiente stock para el producto {self.producto.titulo}.")
+        
+        # Descontar del stock del producto
+        self.producto.cantidad -= self.cantidad
+        self.producto.save()
+        super().save(*args, **kwargs)
+
     def __str__(self):
         return f"Detalle Venta {self.id} - Producto: {self.producto} - Cantidad: {self.cantidad}"
-
