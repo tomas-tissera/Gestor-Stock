@@ -1,0 +1,117 @@
+{% comment %} estadisticas.html {% endcomment %}
+<h4 class="mt-4">Estadísticas Generales</h4>
+<div class="row">
+    <div class="col-md-3 mb-3">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Clientes</h5>
+                <p class="card-text">{{ total_clientes }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Productos</h5>
+                <p class="card-text">{{ total_productos }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Categorías</h5>
+                <p class="card-text">{{ total_categorias }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Ventas Totales</h5>
+                <p class="card-text">${{ total_ventas }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Gráficos -->
+<h4 class="mt-4">Ventas por Vendedor</h4>
+<canvas id="ventasPorVendedorChart" width="400" height="200"></canvas>}
+
+<h4 class="mt-4">Ventas por Método de Pago</h4>
+<canvas id="ventasPorMetodoChart" width="400" height="200"></canvas>
+
+<script>
+    
+    const ventasPorMetodoData = {
+        labels: [
+            {% for venta in ventas_por_metodo %}
+                "{{ venta.metodo_pago }}",
+            {% endfor %}
+        ],
+        datasets: [{
+            label: 'Ventas por Método de Pago',
+            data: [
+                {% for venta in ventas_por_metodo %}
+                    {{ venta.total }},
+                {% endfor %}
+            ],
+            backgroundColor: 'rgba(54, 162, 235, 0.2)',
+            borderColor: 'rgba(54, 162, 235, 1)',
+            borderWidth: 1
+        }]
+    };
+
+    const ventasPorMetodoConfig = {
+        type: 'bar',
+        data: ventasPorMetodoData,
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    };
+
+    const ventasPorMetodoChart = new Chart(document.getElementById('ventasPorMetodoChart'), ventasPorMetodoConfig);
+    function random_rgba() {
+        var o = Math.round, r = Math.random, s = 255;
+        return 'rgba(' + o(r()*s) + ',' + o(r()*s) + ',' + o(r()*s) + ',' + r().toFixed(1) + ')';
+    }
+    // Datos para el gráfico de Ventas por Vendedor
+    const ventasPorVendedorData = {
+        labels: [
+            {% for vendedor in ventas_por_vendedor %}
+                "{{ vendedor.vendedor__username }}",  // Nombre del vendedor
+            {% endfor %}
+        ],
+        datasets: [{
+            label: 'Ventas por Vendedor',
+            data: [
+                {% for vendedor in ventas_por_vendedor %}
+                    {{ vendedor.total_ventas }},  // Total de ventas de cada vendedor
+                {% endfor %}
+            ],
+            backgroundColor: 'rgba(75, 192, 192, 0.2)',  // Color de las barras
+            borderColor: 'rgba(75, 192, 192, 1)',  // Color del borde de las barras
+            borderWidth: 1
+        }]
+    };
+
+    const ventasPorVendedorConfig = {
+        type: 'bar',  // Tipo de gráfico: barras
+        data: ventasPorVendedorData,
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true  // Para que el eje Y comience desde 0
+                }
+            }
+        }
+    };
+
+    // Crear el gráfico de Ventas por Vendedor
+    const ventasPorVendedorChart = new Chart(document.getElementById('ventasPorVendedorChart'), ventasPorVendedorConfig);
+</script>

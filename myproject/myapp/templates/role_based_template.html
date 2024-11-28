@@ -1,3 +1,4 @@
+{% comment %} role_based_template.html {% endcomment %}
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -11,6 +12,9 @@
     <!-- Enlazar el archivo CSS personalizado -->
     {% load static %}
     <link href="{% static 'css/styles.css' %}" rel="stylesheet">
+
+    <!-- Incluir Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.2.1/dist/chart.umd.min.js"></script>
 </head>
 <body class="bg-light">
 
@@ -19,29 +23,30 @@
             <!-- Barra lateral -->
             <!-- Incluir la barra de navegación -->
             {% include 'navbar.html' %}
+
             <!-- Contenido principal -->
             <div class="col-md-9 col-lg-10 main-content p-4">
                 <h2 class="welcome-message mb-4">Bienvenido, {{ user.username }}!</h2>
 
                 {% if role == 'Empleados' %}
                     <div class="alert alert-info role-alert" role="alert">
-                        Estás logueado como **Empleado**. Aquí podrás gestionar ventas, clientes e inventario.
+                        Estás logueado como {{role}}. Aquí podrás gestionar ventas, clientes e inventario.
                     </div>
                     <div class="row action-buttons">
                         <!-- Botones de acción para empleados -->
                         <div class="col-md-4 mb-3">
-                            <a href="#" class="btn btn-primary action-btn w-100">1 Registrar Cliente</a>
+                            <a href="#" class="btn btn-primary action-btn w-100">Registrar Cliente</a>
                         </div>
                         <div class="col-md-4 mb-3">
                             <a href="{% url 'producto_list' %}" class="btn btn-success action-btn w-100">Agregar Inventario</a>
                         </div>
                         <div class="col-md-4 mb-3">
-                            <a href="#" class="btn btn-danger action-btn w-100">3 Realizar Venta</a>
+                            <a href="#" class="btn btn-danger action-btn w-100">Realizar Venta</a>
                         </div>
                     </div>
                 {% elif role == 'Encargado' %}
                     <div class="alert alert-warning role-alert" role="alert">
-                        Estás logueado como **Encargado**. Aquí podrás gestionar empleados, inventarios y más.
+                        Estás logueado como {{role}}. Aquí podrás gestionar empleados, inventarios y más.
                     </div>
                     <div class="row action-buttons">
                         <!-- Botones de acción para encargados -->
@@ -55,12 +60,15 @@
                             <a href="{% url 'producto_list' %}" class="btn btn-success action-btn w-100">Agregar Inventario</a>
                         </div>
                         <div class="col-md-4 mb-3">
-                            <a href="{% url 'categoria_list' %}" class="btn btn-warning action-btn w-100">Agregar Categoria</a>
+                            <a href="{% url 'categoria_list' %}" class="btn btn-warning action-btn w-100">Agregar Categoría</a>
                         </div>
                         <div class="col-md-4 mb-3">
                             <a href="{% url 'venta_list' %}" class="btn btn-danger action-btn w-100">Gestionar Ventas</a>
                         </div>
                     </div>
+
+                    <!-- Incluir las estadísticas -->
+                    {% include 'estadisticas.html' %}
                 {% else %}
                     <div class="alert alert-secondary role-alert" role="alert">
                         No tienes un rol asignado.
