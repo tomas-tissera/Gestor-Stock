@@ -78,6 +78,100 @@
             </div>
         </div>
     </div>
+    <div class="container mt-4">
+        <h1 class="text-center">Dashboard de Ventas</h1>
+    
+        <!-- Gráficos de Ventas -->
+        <h3 class="mt-4">Gráficos de Ventas</h3>
+        <div class="row">
+            <!-- Gráfico de Ventas por Mes -->
+            <div class="col-md-6">
+                <h4>Ventas por Mes</h4>
+                <canvas id="ventasPorMesChart"></canvas>
+            </div>
+    
+            <!-- Gráfico de Ventas por Producto -->
+            <div class="col-md-6">
+                <h4>Ventas por Producto</h4>
+                <canvas id="ventasPorProductoChart"></canvas>
+            </div>
+        </div>
+    
+    </div>
+
+    <!-- Script para Gráficos -->
+    <script>
+        // Asegúrate de que estos datos estén correctamente renderizados
+        var meses = JSON.parse('{{ meses | escapejs }}');
+        var ventasPorMes = JSON.parse('{{ ventas_por_mes | escapejs }}');
+        var productosVendidosLabels = JSON.parse('{{ productos_vendidos_labels | escapejs }}');
+        var productosVendidosData = JSON.parse('{{ productos_vendidos_data | escapejs }}');
+
+        // Gráfico de Ventas por Mes
+        var ctx = document.getElementById('ventasPorMesChart').getContext('2d');
+        var ventasPorMesChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: meses,
+                datasets: [{
+                    label: 'Ventas por Mes',
+                    data: ventasPorMes,
+                    borderColor: 'rgb(75, 192, 192)',
+                    fill: false,
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Meses'
+                        }
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: 'Monto Vendido (USD)'
+                        }
+                    }
+                }
+            }
+        });
+
+        // Gráfico de Ventas por Producto
+        var ctx2 = document.getElementById('ventasPorProductoChart').getContext('2d');
+        var ventasPorProductoChart = new Chart(ctx2, {
+            type: 'bar',
+            data: {
+                labels: productosVendidosLabels,
+                datasets: [{
+                    label: 'Ventas por Producto',
+                    data: productosVendidosData,
+                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                    borderColor: 'rgba(255, 99, 132, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Productos'
+                        }
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: 'Monto Vendido (USD)'
+                        }
+                    }
+                }
+            }
+        });
+    </script>
 
     <!-- Incluir el script de Bootstrap -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>

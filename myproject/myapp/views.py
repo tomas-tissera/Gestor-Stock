@@ -13,6 +13,9 @@ from django.contrib.auth.views import LoginView
 from django.db.models import Count, Sum
 from collections import defaultdict
 from decimal import Decimal
+from datetime import datetime, timedelta
+import json
+from django.db.models import F, Sum
 
 class CustomLoginView(LoginView):
     template_name = 'login.html'
@@ -37,6 +40,35 @@ def role_based_view(request):
     # Calcular datos para gráficos de categorías
     categorias_chart_data = Categoria.objects.annotate(total_ventas=Sum('productos__venta__total_venta'))
 
+    # Datos para los gráficos: Ventas por mes
+    today = datetime.today()
+    start_of_month = today.replace(day=1)  # Primer día del mes
+    end_of_month = today.replace(day=28) + timedelta(days=4)  # Final de mes (aproximadamente)
+    
+    ventas_por_mes = Venta.objects.filter(fecha_venta__gte=start_of_month, fecha_venta__lte=end_of_month)
+    ventas_mes_data = ventas_por_mes.values('fecha_venta__month').annotate(total_vendido=Sum('total_venta')).order_by('fecha_venta__month')
+    
+    # Crear etiquetas para los meses (por ejemplo, Enero, Febrero...)
+    meses = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre']
+    ventas_mes_data = [v['total_vendido'] for v in ventas_mes_data]
+    
+    # Convertir los valores de ventas mensuales a float
+    ventas_mes_data = [float(v) for v in ventas_mes_data]
+    
+    # Datos para los gráficos de ventas por producto
+    productos_vendidos = DetalleVenta.objects.filter(venta__fecha_venta__gte=start_of_month, venta__fecha_venta__lte=end_of_month)
+    
+    # Calcular el total vendido por producto (cantidad * precio_unitario)
+    productos_vendidos_agrupados = productos_vendidos.values('producto__titulo')\
+        .annotate(total_vendido=Sum(F('cantidad') * F('precio_unitario')))
+    
+    productos_vendidos_labels = [producto['producto__titulo'] for producto in productos_vendidos_agrupados]
+    productos_vendidos_data = [producto['total_vendido'] for producto in productos_vendidos_agrupados]
+    
+    # Convertir los valores de ventas por producto a float
+    productos_vendidos_data = [float(v) for v in productos_vendidos_data]
+
+    # Pasar todos los datos al contexto
     context = {
         'total_clientes': total_clientes,
         'total_productos': total_productos,
@@ -45,12 +77,15 @@ def role_based_view(request):
         'ventas_por_metodo': ventas_por_metodo,
         'ventas_por_vendedor': ventas_por_vendedor,
         'categorias_chart_data': categorias_chart_data,
-        'role': 'Empleados' if request.user.groups.filter(name='Empleados').exists() else 'Encargado',  # Suponiendo que tienes grupos para roles
+        'meses': json.dumps(meses),
+        'ventas_por_mes': json.dumps(ventas_mes_data),
+        'productos_vendidos_labels': json.dumps(productos_vendidos_labels),
+        'productos_vendidos_data': json.dumps(productos_vendidos_data),
+        'role': 'Empleados' if request.user.groups.filter(name='Empleados').exists() else 'Encargado',
         'user': request.user
     }
 
     return render(request, 'role_based_template.html', context)
-
 def home_view(request):
     return render(request, 'home.html')
 
@@ -568,3 +603,33 @@ def empleado_dashboard(request):
 
     except Empleados.DoesNotExist:
         return render(request, 'empleados/empleado_dash.html', {'error': 'Empleado no encontrado'})
+    
+
+    today = datetime.today()
+    start_of_month = today.replace(day=1)  # Primer día del mes
+    end_of_month = today.replace(day=28) + timedelta(days=4)  # Final de mes (aproximadamente)
+    
+    # Ventas del mes
+    ventas_mes = Venta.objects.filter(fecha_venta__gte=start_of_month, fecha_venta__lte=end_of_month)
+    ventas_por_mes = ventas_mes.values('fecha_venta__month').annotate(total_vendido=Sum('total_venta')).order_by('fecha_venta__month')
+    
+    # Crear etiquetas para los meses (por ejemplo, Enero, Febrero...)
+    meses = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre']
+    ventas_mes_data = [v['total_vendido'] for v in ventas_por_mes]
+    
+    # Productos vendidos
+    productos_vendidos = DetalleVenta.objects.filter(venta__fecha_venta__gte=start_of_month, venta__fecha_venta__lte=end_of_month)
+    productos_vendidos_agrupados = productos_vendidos.values('producto__titulo').annotate(total_vendido=Sum('subtotal'))
+    
+    productos_vendidos_labels = [producto['producto__titulo'] for producto in productos_vendidos_agrupados]
+    productos_vendidos_data = [producto['total_vendido'] for producto in productos_vendidos_agrupados]
+    
+    # Convertir a JSON para pasar a JavaScript
+    context = {
+        'meses': json.dumps(meses),
+        'ventas_por_mes': json.dumps(ventas_mes_data),
+        'productos_vendidos_labels': json.dumps(productos_vendidos_labels),
+        'productos_vendidos_data': json.dumps(productos_vendidos_data),
+    }
+    
+    return render(request, 'role_based_template.html', context)
