@@ -1,57 +1,65 @@
 {% extends 'base.html' %}
+
 {% block content %}
 <div class="container mt-4">
-    <h1>
+    <h1 class="text-center">
         {% if object %}
             Editar Venta
         {% else %}
             Crear Nueva Venta
         {% endif %}
     </h1>
-    <form method="post">
+
+    <form method="post" class=" p-4 shadow-sm rounded-mod">
         {% csrf_token %}
         {{ form.as_p }}
+
         {% if object %}
             Editar Venta
         {% else %}
-        <h3>Agregar Productos</h3>
-        <div id="productos">
-            <div class="producto-item">
-                <label for="producto">Producto</label>
-                <select name="producto_0" class="form-control producto" data-index="0">
-                    <option value="">Seleccione un producto</option>
-                    {% for producto in productos %}
-                        <option value="{{ producto.id }}" data-precio="{{ producto.precio }}" data-stock="{{ producto.cantidad }}">
-                            {{ producto.titulo }} (Stock: {{ producto.cantidad }})
-                        </option>
-                    {% endfor %}
-                </select>
+        <div class="row">
+            <div class="col-8">
+                <h3 class="text-primary">Agregar Productos</h3>
+                <div id="productos" class="mb-3">
+                    <div class="producto-item p-3 border rounded mb-3">
+                        <label for="producto" class="form-label">Producto</label>
+                        <select name="producto_0" class="form-select producto" data-index="0">
+                            <option value="">Seleccione un producto</option>
+                            {% for producto in productos %}
+                                <option value="{{ producto.id }}" data-precio="{{ producto.precio }}" data-stock="{{ producto.cantidad }}">
+                                    {{ producto.titulo }} (Stock: {{ producto.cantidad }})
+                                </option>
+                            {% endfor %}
+                        </select>
 
-                <label for="cantidad">Cantidad</label>
-                <input 
-                    type="number" 
-                    name="cantidad_0" 
-                    class="form-control cantidad" 
-                    value="1" 
-                    required 
-                    min="1" 
-                    max="">
-                
-                <label for="precio_unitario">Precio Unitario</label>
-                <input type="number" name="precio_unitario_0" class="form-control precio_unitario" step="0.01" required readonly>
-                <br>
+                        <label for="cantidad" class="form-label mt-3">Cantidad</label>
+                        <input 
+                            type="number" 
+                            name="cantidad_0" 
+                            class="form-control cantidad" 
+                            value="1" 
+                            required 
+                            min="1" 
+                            max="">
+
+                        <label for="precio_unitario" class="form-label mt-3">Precio Unitario</label>
+                        <input type="number" name="precio_unitario_0" class="form-control precio_unitario" step="0.01" required readonly>
+                    </div>
+                </div>
+
+                <button type="button" id="agregarProducto" class="btn btn-primary w-100">Agregar otro producto</button>
+            </div>
+
+            <div id="fixed-container"  class="col-4">
+                <div id="total-container" class="bg-dark text-white p-3 rounded mb-3">
+                    <h4 class="text-center m-0">Total: <span id="total-final">0.00</span></h4>
+                </div>
+                <button type="submit" class="btn btn-success w-100">Guardar</button>
+                <a href="{% url 'venta_list' %}" class="btn btn-secondary w-100 mt-2">Cancelar</a>
             </div>
         </div>
-
-        <button type="button" id="agregarProducto" class="btn btn-primary">Agregar otro producto</button>
-        <br><br>
-        <div id="total-container" class="mt-3">
-            <h4>Total: <span id="total-final">0.00</span></h4>
-        </div>
-        <button type="submit" class="btn btn-success">Guardar</button>
-        <a href="{% url 'venta_list' %}" class="btn btn-secondary">Cancelar</a>
-    </form>
         {% endif %}
+    </form>
 </div>
 
 <script>
@@ -110,10 +118,10 @@
     document.getElementById('agregarProducto').addEventListener('click', function () {
         const productosContainer = document.getElementById('productos');
         const productoItem = document.createElement('div');
-        productoItem.classList.add('producto-item');
+        productoItem.classList.add('producto-item', 'p-3', 'border', 'rounded', 'mb-3');
         productoItem.innerHTML = `
-            <label for="producto">Producto</label>
-            <select name="producto_${productoCount}" class="form-control producto" data-index="${productoCount}">
+            <label for="producto" class="form-label">Producto</label>
+            <select name="producto_${productoCount}" class="form-select producto" data-index="${productoCount}">
                 <option value="">Seleccione un producto</option>
                 {% for producto in productos %}
                     <option value="{{ producto.id }}" data-precio="{{ producto.precio }}" data-stock="{{ producto.cantidad }}">
@@ -121,7 +129,7 @@
                     </option>
                 {% endfor %}
             </select>
-            <label for="cantidad">Cantidad</label>
+            <label for="cantidad" class="form-label mt-3">Cantidad</label>
             <input 
                 type="number" 
                 name="cantidad_${productoCount}" 
@@ -130,9 +138,8 @@
                 required 
                 min="1" 
                 max="">
-            <label for="precio_unitario">Precio Unitario</label>
+            <label for="precio_unitario" class="form-label mt-3">Precio Unitario</label>
             <input type="number" name="precio_unitario_${productoCount}" class="form-control precio_unitario" step="0.01" required readonly>
-            <br>
         `;
         productosContainer.appendChild(productoItem);
 
@@ -146,4 +153,110 @@
         calcularTotal(); // Recalcular el total al agregar un nuevo producto
     });
 </script>
+<style>
+    /* Asegurar que los botones y total se mantengan a la derecha */
+    #fixed-container {
+        position: fixed;
+        top: 160px;
+        right: 20px;
+        z-index: 999;
+        width: 300px;
+        padding: 10px;
+    }
+    /* Hacer que el formulario y sus elementos sean más atractivos */
+form.bg-light {
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+h1.text-center {
+    margin-bottom: 30px;
+}
+
+.row {
+    display: flex;
+    gap: 20px;
+}
+
+#productos {
+    margin-bottom: 20px;
+    width: 150%;
+}
+
+.producto-item {
+    padding: 20px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    margin-bottom: 20px;
+    background-color: #c5c5c5;
+}
+
+.form-label {
+    font-weight: bold;
+}
+
+#fixed-container {
+    position: fixed;
+    top: 100px;
+    right: 20px;
+    z-index: 999;
+    width: 300px;
+    background-color: #343a40;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    color: #fff;
+    transition: 0.3s ease-in-out;
+}
+.rounded-mod {
+    background-color: #d7d7d7;
+    width: 70%;
+}
+#total-container {
+    background-color: #007bff;
+    padding: 15px;
+    border-radius: 8px;
+    color: white;
+    font-size: 18px;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+#fixed-container button {
+    margin-top: 10px;
+}
+
+#agregarProducto {
+    background-color: #28a745;
+    border-color: #28a745;
+    color: white;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+#agregarProducto:hover {
+    background-color: #218838;
+}
+
+button.w-100 {
+    width: 100%;
+}
+
+#fixed-container a {
+    margin-top: 10px;
+    background-color: #6c757d;
+    border-color: #6c757d;
+    color: white;
+}
+
+#fixed-container a:hover {
+    background-color: #5a6268;
+}
+select, #id_metodo_pago{
+    width: 100%;
+    border-radius: 5px;
+    height: 35px;
+}
+</style>
 {% endblock %}
