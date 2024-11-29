@@ -44,4 +44,8 @@ urlpatterns = [
     path('ventas/<int:pk>/', VentaDetailView.as_view(), name='venta_detail'),
     path('ventas/editar/<int:pk>/', VentaUpdateView.as_view(), name='venta_edit'),
     path('ventas/eliminar/<int:pk>/', VentaDeleteView.as_view(), name='venta_delete'),
+
+    #empleado
+    path('dashboard/', views.empleado_dashboard, name='empleado_dashboard'),
+
 ]

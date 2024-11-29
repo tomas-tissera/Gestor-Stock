@@ -23,9 +23,11 @@
                 <td>{{ venta.fecha_venta|date:"d/m/Y" }}</td>  <!-- Formato de fecha de la venta -->
                 <td>${{ venta.total_venta }}</td>  <!-- Total de la venta -->
                 <td>
+                    {% if role == 'Encargado' %}
+                        <a href="{% url 'venta_delete' venta.pk %}" class="btn btn-danger btn-sm" onclick="return confirm('¿Estás seguro de que deseas eliminar esta venta?');">Eliminar</a>  <!-- Eliminar venta -->
+                        {% comment %} <a href="{% url 'venta_edit' venta.pk %}" class="btn btn-warning btn-sm">Editar</a>  <!-- Editar venta --> {% endcomment %}
+                    {% endif %}
                     <a href="{% url 'venta_detail' venta.pk %}" class="btn btn-info btn-sm">Ver</a>  <!-- Detalle de la venta -->
-                    {% comment %} <a href="{% url 'venta_edit' venta.pk %}" class="btn btn-warning btn-sm">Editar</a>  <!-- Editar venta --> {% endcomment %}
-                    <a href="{% url 'venta_delete' venta.pk %}" class="btn btn-danger btn-sm" onclick="return confirm('¿Estás seguro de que deseas eliminar esta venta?');">Eliminar</a>  <!-- Eliminar venta -->
                 </td>
             </tr>
             {% empty %}

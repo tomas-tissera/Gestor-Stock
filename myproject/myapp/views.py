@@ -11,6 +11,8 @@ from django.views.generic import ListView, DetailView, CreateView, UpdateView, D
 from django.contrib.auth.models import User
 from django.contrib.auth.views import LoginView
 from django.db.models import Count, Sum
+from collections import defaultdict
+from decimal import Decimal
 
 class CustomLoginView(LoginView):
     template_name = 'login.html'
@@ -171,7 +173,19 @@ class ProductoDetailView(DetailView):
     model = Producto
     template_name = "productos/producto_detail.html"
     context_object_name = "producto"
+    def get_context_data(self, **kwargs):
+            # Llamamos al contexto original
+            context = super().get_context_data(**kwargs)
 
+            # Determinar el rol del usuario basado en los grupos
+            if self.request.user.groups.filter(name='Empleados').exists():
+                role = 'Empleados'
+            else:
+                role = 'Encargado'
+
+            # Añadir el rol al contexto para que esté disponible en el template
+            context['role'] = role
+            return context
 # Crear producto
 class ProductoCreateView(CreateView):
     model = Producto
@@ -197,7 +211,37 @@ class ClienteListView(ListView):
     model = Cliente
     template_name = "clientes/cliente_list.html"
     context_object_name = "clientes"
-    
+
+class ClienteListView(ListView):
+    model = Cliente
+    template_name = "clientes/cliente_list.html"
+    context_object_name = "clientes"
+
+    def get_queryset(self):
+        # Obtener el término de búsqueda desde la URL (GET)
+        search_query = self.request.GET.get('q', '')
+
+        if search_query:
+            # Filtrar los clientes que contengan el término de búsqueda en su nombre
+            return Cliente.objects.filter(nombre__icontains=search_query)
+        else:
+            # Si no hay búsqueda, retornar todos los clientes
+            return Cliente.objects.all()
+
+    def get_context_data(self, **kwargs):
+        # Llamamos al contexto original
+        context = super().get_context_data(**kwargs)
+
+        # Determinar el rol del usuario basado en los grupos
+        if self.request.user.groups.filter(name='Empleados').exists():
+            role = 'Empleados'
+        else:
+            role = 'Encargado'
+
+        # Añadir el rol al contexto para que esté disponible en el template
+        context['role'] = role
+        return context
+
 # Detalle de un producto
 class ClienteDetailView(DetailView):
     model = Cliente
@@ -241,7 +285,19 @@ class VentaDetailView(DetailView):
     model = Venta
     template_name = 'ventas/venta_detail.html'
     context_object_name = 'venta'
+    def get_context_data(self, **kwargs):
+        # Llamamos al contexto original
+        context = super().get_context_data(**kwargs)
 
+        # Determinar el rol del usuario basado en los grupos
+        if self.request.user.groups.filter(name='Empleados').exists():
+            role = 'Empleados'
+        else:
+            role = 'Encargado'
+
+        # Añadir el rol al contexto para que esté disponible en el template
+        context['role'] = role
+        return context
 # Crear nueva venta con productos
 class VentaCreateView(CreateView):
     model = Venta
@@ -366,3 +422,149 @@ class DetalleVentaCreateView(CreateView):
             return self.form_invalid(form)
 
         return redirect(self.success_url)
+
+@login_required
+def empleado_dashboard(request):
+    try:
+        # Obtener los datos del empleado actual
+        empleado = Empleados.objects.get(user=request.user)
+
+        # Si el empleado es un "Empleado" o "Encargado", podemos mostrar las ventas y productos
+        total_ventas = len(Venta.objects.filter(vendedor=request.user))
+        monto_total_vendido = float(Venta.objects.aggregate(total_sales=Sum('total_venta'))['total_sales'] or 0)
+
+        ventas_realizadas = Venta.objects.filter(vendedor=request.user)
+        productos_disponibles = Producto.objects.filter(cantidad__gt=0)
+
+        # Filtrar las ventas realizadas por este empleado (vendedor)
+        ventas = Venta.objects.filter(vendedor=empleado.user)
+        
+        # Obtener los clientes asociados a estas ventas
+        clientes_vendidos = Cliente.objects.filter(venta__in=ventas).distinct()
+
+        # Crear una lista con la información que necesitamos para mostrar
+        cliente_info = []
+        ventas_por_mes = defaultdict(float)
+        ventas_totales = defaultdict(float)
+        
+        for cliente in clientes_vendidos:
+            # Contar las veces que un cliente ha comprado
+            cantidad_ventas = ventas.filter(cliente=cliente).count()
+
+            # Sumar el monto total vendido a este cliente
+            total_vendido = 0
+            detalles_venta = DetalleVenta.objects.filter(venta__cliente=cliente)
+            for detalle in detalles_venta:
+                total_vendido += detalle.subtotal  # Esto utiliza el método @property de DetalleVenta
+            
+            cliente_info.append({
+                'cliente': cliente,
+                'cantidad_ventas': cantidad_ventas,
+                'total_vendido': total_vendido
+            })
+
+            # Acumulando ventas por mes
+            for venta in ventas.filter(cliente=cliente):
+                mes = venta.fecha_venta.strftime('%Y-%m')  # Año-Mes para agrupación
+                ventas_por_mes[mes] += float(venta.total_venta)  # Convertir a float para evitar el error de tipo
+            
+            # Acumulando ventas totales por cliente
+            ventas_totales[cliente.nombre] = float(total_vendido)  # Convertir a float
+
+        # Preparar los datos para el gráfico de ventas por mes
+        meses = sorted(ventas_por_mes.keys())
+        ventas_por_mes_values = [ventas_por_mes[mes] for mes in meses]
+
+        # Preparar los datos para el gráfico de ventas por cliente
+        clientes = list(ventas_totales.keys())
+        ventas_clientes_values = list(ventas_totales.values())
+
+        context = {
+            'empleado': empleado,
+            'ventas_realizadas': ventas_realizadas,
+            'productos_disponibles': productos_disponibles,
+            'total_ventas': total_ventas,
+            'monto_total_vendido': monto_total_vendido,
+            'cliente_info': cliente_info,
+            'ventas_por_mes': ventas_por_mes_values,
+            'meses': meses,
+            'clientes': clientes,
+            'ventas_clientes': ventas_clientes_values,
+        }
+
+        return render(request, 'empleados/empleado_dash.html', context)
+
+    except Empleados.DoesNotExist:
+        return render(request, 'empleados/empleado_dash.html', {'error': 'Empleado no encontrado'})
+
+    try:
+        # Obtener los datos del empleado actual
+        empleado = Empleados.objects.get(user=request.user)
+
+        # Si el empleado es un "Empleado" o "Encargado", podemos mostrar las ventas y productos
+        total_ventas = len(Venta.objects.filter(vendedor=request.user))
+        monto_total_vendido = float(Venta.objects.aggregate(total_sales=Sum('total_venta'))['total_sales'] or 0)
+
+        ventas_realizadas = Venta.objects.filter(vendedor=request.user)
+        productos_disponibles = Producto.objects.filter(cantidad__gt=0)
+
+        # Filtrar las ventas realizadas por este empleado (vendedor)
+        ventas = Venta.objects.filter(vendedor=empleado.user)
+        
+        # Obtener los clientes asociados a estas ventas
+        clientes_vendidos = Cliente.objects.filter(venta__in=ventas).distinct()
+
+        # Crear una lista con la información que necesitamos para mostrar
+        cliente_info = []
+        ventas_por_mes = defaultdict(float)
+        ventas_totales = defaultdict(float)
+        
+        for cliente in clientes_vendidos:
+            # Contar las veces que un cliente ha comprado
+            cantidad_ventas = ventas.filter(cliente=cliente).count()
+
+            # Sumar el monto total vendido a este cliente
+            total_vendido = 0
+            detalles_venta = DetalleVenta.objects.filter(venta__cliente=cliente)
+            for detalle in detalles_venta:
+                total_vendido += detalle.subtotal  # Esto utiliza el método @property de DetalleVenta
+            
+            cliente_info.append({
+                'cliente': cliente,
+                'cantidad_ventas': cantidad_ventas,
+                'total_vendido': total_vendido
+            })
+
+            # Acumulando ventas por mes
+            for venta in ventas.filter(cliente=cliente):
+                mes = venta.fecha_venta.strftime('%Y-%m')  # Año-Mes para agrupación
+                ventas_por_mes[mes] += venta.total_venta
+            
+            # Acumulando ventas totales por cliente
+            ventas_totales[cliente.nombre] = total_vendido
+
+        # Preparar los datos para el gráfico de ventas por mes
+        meses = sorted(ventas_por_mes.keys())
+        ventas_por_mes_values = [ventas_por_mes[mes] for mes in meses]
+
+        # Preparar los datos para el gráfico de ventas por cliente
+        clientes = list(ventas_totales.keys())
+        ventas_clientes_values = list(ventas_totales.values())
+
+        context = {
+            'empleado': empleado,
+            'ventas_realizadas': ventas_realizadas,
+            'productos_disponibles': productos_disponibles,
+            'total_ventas': total_ventas,
+            'monto_total_vendido': monto_total_vendido,
+            'cliente_info': cliente_info,
+            'ventas_por_mes': ventas_por_mes_values,
+            'meses': meses,
+            'clientes': clientes,
+            'ventas_clientes': ventas_clientes_values,
+        }
+
+        return render(request, 'empleados/empleado_dash.html', context)
+
+    except Empleados.DoesNotExist:
+        return render(request, 'empleados/empleado_dash.html', {'error': 'Empleado no encontrado'})

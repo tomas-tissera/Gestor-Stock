@@ -35,15 +35,16 @@
                     <div class="row action-buttons">
                         <!-- Botones de acción para empleados -->
                         <div class="col-md-4 mb-3">
-                            <a href="#" class="btn btn-primary action-btn w-100">Registrar Cliente</a>
+                            <a href="{% url 'clientes_list' %}" class="btn btn-secondary action-btn w-100">Gestionar Clientes</a>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <a href="{% url 'venta_list' %}" class="btn btn-danger action-btn w-100">Gestionar Ventas</a>
                         </div>
                         <div class="col-md-4 mb-3">
                             <a href="{% url 'producto_list' %}" class="btn btn-success action-btn w-100">Agregar Inventario</a>
                         </div>
-                        <div class="col-md-4 mb-3">
-                            <a href="#" class="btn btn-danger action-btn w-100">Realizar Venta</a>
-                        </div>
                     </div>
+                    {% include 'empleados/empleado_dash.html' %}
                 {% elif role == 'Encargado' %}
                     <div class="alert alert-warning role-alert" role="alert">
                         Estás logueado como {{role}}. Aquí podrás gestionar empleados, inventarios y más.

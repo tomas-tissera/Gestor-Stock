@@ -46,11 +46,16 @@
                 <td>{{ cliente.telefono }}</td>
                 <td>{{ cliente.get_estatus_display }}</td>
                 <td>
+                    <!-- Botón de edición siempre visible -->
                     <a href="{% url 'clientes_update' cliente.id %}" class="btn btn-warning btn-sm">Editar</a>
-                    <form method="post" action="{% url 'clientes_delete' cliente.id %}" style="display:inline-block;">
-                        {% csrf_token %}
-                        <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
-                    </form>
+
+                    <!-- El botón de eliminar solo será visible si el rol es 'encargado' -->
+                    {% if role == 'Encargado' %}
+                        <form method="post" action="{% url 'clientes_delete' cliente.id %}" style="display:inline-block;">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
+                        </form>
+                    {% endif %}
                 </td>
             </tr>
             {% empty %}

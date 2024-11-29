@@ -1,0 +1,112 @@
+/* Asegurar que los botones y total se mantengan a la derecha */
+
+#fixed-container {
+    position: fixed;
+    top: 160px;
+    right: 20px;
+    z-index: 999;
+    width: 300px;
+    padding: 10px;
+}
+
+
+/* Hacer que el formulario y sus elementos sean más atractivos */
+
+form.bg-light {
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+h1.text-center {
+    margin-bottom: 30px;
+}
+
+.row {
+    display: flex;
+    gap: 20px;
+}
+
+#productos {
+    margin-bottom: 20px;
+    width: 150%;
+}
+
+.producto-item {
+    padding: 20px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    margin-bottom: 20px;
+    background-color: #c5c5c5;
+}
+
+.form-label {
+    font-weight: bold;
+}
+
+#fixed-container {
+    position: fixed;
+    top: 100px;
+    right: 20px;
+    z-index: 999;
+    width: 300px;
+    background-color: #343a40;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    color: #fff;
+    transition: 0.3s ease-in-out;
+}
+
+.rounded-mod {
+    background-color: #d7d7d7;
+    width: 70%;
+}
+
+#total-container {
+    background-color: #007bff;
+    padding: 15px;
+    border-radius: 8px;
+    color: white;
+    font-size: 18px;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+#fixed-container button {
+    margin-top: 10px;
+}
+
+#agregarProducto {
+    background-color: #28a745;
+    border-color: #28a745;
+    color: white;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+#agregarProducto:hover {
+    background-color: #218838;
+}
+
+button.w-100 {
+    width: 100%;
+}
+
+#fixed-container a {
+    margin-top: 10px;
+    background-color: #6c757d;
+    border-color: #6c757d;
+    color: white;
+}
+
+#fixed-container a:hover {
+    background-color: #5a6268;
+}
+
+select,
+#id_metodo_pago {
+    width: 100%;
+    border-radius: 5px;
+    height: 35px;
+}
