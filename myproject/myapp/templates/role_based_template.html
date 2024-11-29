@@ -44,7 +44,7 @@
                             <a href="{% url 'producto_list' %}" class="btn btn-success action-btn w-100">Agregar Inventario</a>
                         </div>
                     </div>
-                    {% include 'empleados/empleado_dash.html' %}
+                    
                 {% elif role == 'Encargado' %}
                     <div class="alert alert-warning role-alert" role="alert">
                         Estás logueado como {{role}}. Aquí podrás gestionar empleados, inventarios y más.
