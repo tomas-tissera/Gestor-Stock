@@ -21,7 +21,9 @@
                 <select name="producto_0" class="form-control producto" data-index="0">
                     <option value="">Seleccione un producto</option>
                     {% for producto in productos %}
-                        <option value="{{ producto.id }}" data-precio="{{ producto.precio }}">{{ producto.titulo }} (Stock: {{ producto.cantidad }})</option>
+                        <option value="{{ producto.id }}" data-precio="{{ producto.precio }}" data-stock="{{ producto.cantidad }}">
+                            {{ producto.titulo }} (Stock: {{ producto.cantidad }})
+                        </option>
                     {% endfor %}
                 </select>
 
@@ -29,12 +31,12 @@
                 <input 
                     type="number" 
                     name="cantidad_0" 
-                    class="form-control" 
+                    class="form-control cantidad" 
                     value="1" 
                     required 
                     min="1" 
-                    max="{{ producto.cantidad }}">
-                     {% comment %} <!-- Agregamos el máximo según el stock disponible -->> {% endcomment %}
+                    max="">
+                
                 <label for="precio_unitario">Precio Unitario</label>
                 <input type="number" name="precio_unitario_0" class="form-control precio_unitario" step="0.01" required readonly>
                 <br>
@@ -43,31 +45,69 @@
 
         <button type="button" id="agregarProducto" class="btn btn-primary">Agregar otro producto</button>
         <br><br>
-
+        <div id="total-container" class="mt-3">
+            <h4>Total: <span id="total-final">0.00</span></h4>
+        </div>
         <button type="submit" class="btn btn-success">Guardar</button>
         <a href="{% url 'venta_list' %}" class="btn btn-secondary">Cancelar</a>
     </form>
         {% endif %}
-        
 </div>
 
 <script>
     let productoCount = 1;
 
+    // Función para actualizar el precio unitario al cambiar el producto seleccionado
     function actualizarPrecioUnitario(event) {
         const selectProducto = event.target;
-        const precioUnitarioInput = selectProducto.closest('.producto-item').querySelector('.precio_unitario');
-        const precio = selectProducto.selectedOptions[0].getAttribute('data-precio');
-        if (precio) {
-            precioUnitarioInput.value = precio;
-        }
+        const productoItem = selectProducto.closest('.producto-item');
+        const precioUnitarioInput = productoItem.querySelector('.precio_unitario');
+        const cantidadInput = productoItem.querySelector('.cantidad');
+
+        const precio = parseFloat(selectProducto.selectedOptions[0]?.getAttribute('data-precio')) || 0;
+        const stock = parseInt(selectProducto.selectedOptions[0]?.getAttribute('data-stock'), 10) || 1;
+
+        precioUnitarioInput.value = precio.toFixed(2);
+        cantidadInput.setAttribute('max', stock);
+
+        calcularTotal(); // Recalcular el total después de actualizar el precio unitario
     }
 
-    document.querySelectorAll('.producto').forEach(function(select) {
-        select.addEventListener('change', actualizarPrecioUnitario);
+    // Función para calcular el total final
+    function calcularTotal() {
+        let total = 0;
+
+        document.querySelectorAll('.producto-item').forEach(function (item) {
+            const cantidad = parseFloat(item.querySelector('.cantidad').value) || 0;
+            const precioUnitario = parseFloat(item.querySelector('.precio_unitario').value) || 0;
+
+            total += cantidad * precioUnitario;
+        });
+
+        document.getElementById('total-final').textContent = total.toFixed(2);
+    }
+
+    // Registrar eventos para un selector de producto
+    function agregarEventoCambioProducto(selectElement) {
+        selectElement.addEventListener('change', actualizarPrecioUnitario);
+    }
+
+    // Registrar eventos para un input de cantidad
+    function agregarEventoCambioCantidad(cantidadInput) {
+        cantidadInput.addEventListener('input', calcularTotal);
+    }
+
+    // Registrar eventos para los elementos iniciales
+    document.querySelectorAll('.producto').forEach(function (select) {
+        agregarEventoCambioProducto(select);
     });
 
-    document.getElementById('agregarProducto').addEventListener('click', function() {
+    document.querySelectorAll('.cantidad').forEach(function (input) {
+        agregarEventoCambioCantidad(input);
+    });
+
+    // Evento para agregar un nuevo producto
+    document.getElementById('agregarProducto').addEventListener('click', function () {
         const productosContainer = document.getElementById('productos');
         const productoItem = document.createElement('div');
         productoItem.classList.add('producto-item');
@@ -95,15 +135,15 @@
             <br>
         `;
         productosContainer.appendChild(productoItem);
-    
-        // Actualizamos el máximo según el stock seleccionado
-        productoItem.querySelector('.producto').addEventListener('change', function(event) {
-            const stock = this.selectedOptions[0].getAttribute('data-stock');
-            productoItem.querySelector('.cantidad').setAttribute('max', stock);
-        });
-    
+
+        const newSelect = productoItem.querySelector('.producto');
+        const newCantidadInput = productoItem.querySelector('.cantidad');
+
+        agregarEventoCambioProducto(newSelect);
+        agregarEventoCambioCantidad(newCantidadInput);
+
         productoCount++;
+        calcularTotal(); // Recalcular el total al agregar un nuevo producto
     });
-    
 </script>
 {% endblock %}
