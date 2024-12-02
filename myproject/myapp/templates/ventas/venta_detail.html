@@ -3,39 +3,49 @@
 {% block content %}
 <div class="container mt-4">
     <h1>Detalles de la Venta</h1>
+   
     
-    <div class="card mb-4">
-        <div class="card-header">
-            <h5>Venta #{{ venta.id }} - Cliente: {{ venta.cliente.nombre }}</h5>
-        </div>
-        <div class="card-body">
-            <p><strong>Fecha de venta:</strong> {{ venta.fecha_venta }}</p>
-            <p><strong>Vendedor:</strong> {{ venta.vendedor }}</p>  <!-- Mostrar vendedor aquí -->
+    <!-- Área a imprimir -->
+    <div id="print-area">
+        <div class="card mb-4">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Venta #{{ venta.id }} - Cliente: {{ venta.cliente.nombre }}</h5>
+                <button onclick="printVenta()" class="btn btn-light border" >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-printer" viewBox="0 0 16 16">
+                        <path d="M2 5a2 2 0 0 0-2 2v3a2 2 0 0 0 2 2h1v3a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1v-3h1a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2H2zm0 1h12a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-1v-2a1 1 0 0 0-1-1H4a1 1 0 0 0-1 1v2H2a1 1 0 1-1-1V7a1 1 0 0 1 1-1zm10 8H4v-3h8v3zM5 1a1 1 0 0 0-1 1v2h8V2a1 1 0 0 0-1-1H5zm0 1h4v1H5V2z"/>
+                    </svg>
+                </button>
+            </div>
             
-            <h4>Productos Comprados</h4>
-            <table class="table table-bordered">
-                <thead>
-                    <tr>
-                        <th>Producto</th>
-                        <th>Cantidad</th>
-                        <th>Precio Unitario</th>
-                        <th>Subtotal</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for detalle in venta.detalleventa_set.all %}
-                    <tr>
-                        <td>{{ detalle.producto.titulo }}</td>
-                        <td>{{ detalle.cantidad }}</td>
-                        <td>${{ detalle.precio_unitario }}</td>
-                        <td>${{ detalle.subtotal }}</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+            <div class="card-body">
+                <p><strong>Fecha de venta:</strong> {{ venta.fecha_venta }}</p>
+                <p><strong>Vendedor:</strong> {{ venta.vendedor }}</p> <!-- Mostrar vendedor aquí -->
+                
+                <h4>Productos Comprados</h4>
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Producto</th>
+                            <th>Cantidad</th>
+                            <th>Precio Unitario</th>
+                            <th>Subtotal</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for detalle in venta.detalleventa_set.all %}
+                        <tr>
+                            <td>{{ detalle.producto.titulo }}</td>
+                            <td>{{ detalle.cantidad }}</td>
+                            <td>${{ detalle.precio_unitario }}</td>
+                            <td>${{ detalle.subtotal }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
 
-            <div class="mt-4">
-                <h4>Total: ${{ venta.total_venta  }}</h4>
+                <div class="mt-4">
+                    <h4>Total: ${{ venta.total_venta }}</h4>
+                </div>
             </div>
         </div>
     </div>
@@ -45,4 +55,27 @@
         <a href="{% url 'venta_list' %}" class="btn btn-secondary">Volver a Ventas</a>
     </div>
 </div>
+
+<script>
+    function printVenta() {
+        // Obtiene el contenido del área de impresión
+        var printContents = document.getElementById('print-area').innerHTML;
+
+        // Crea una nueva ventana
+        var printWindow = window.open('', '', 'height=600,width=800');
+
+        // Escribe el contenido HTML en la nueva ventana
+        printWindow.document.write('<html><head><title>Imprimir Detalles de la Venta</title>');
+        printWindow.document.write('<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">'); // Incluye estilos Bootstrap
+        printWindow.document.write('</head><body>');
+        printWindow.document.write(printContents);
+        printWindow.document.write('</body></html>');
+
+        // Cierra el documento para que se renderice
+        printWindow.document.close();
+
+        // Abre el cuadro de diálogo de impresión
+        printWindow.print();
+    }
+</script>
 {% endblock %}
