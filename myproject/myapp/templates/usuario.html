@@ -1,0 +1,145 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="text-center mb-4">Editar Información de Usuario</h2>
+    <form method="post" class="user-edit-form shadow-sm p-4">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-primary w-100">Guardar Cambios</button>
+        <a href="{% url 'role_based_view' %}" class="btn btn-secondary w-100 mt-2">Cancelar</a>
+    </form>
+</div>
+
+<!-- Agregar CSS personalizado -->
+<style>
+    #id_nueva_contrasena{
+        width:100%;
+    }
+    .user-edit-form {
+        margin: 0 auto;
+        padding: 30px;
+        border-radius: 10px;
+        background-color: #ffffff;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .user-edit-form h2 {
+        color: #333;
+        font-size: 1.8rem;
+        font-weight: 600;
+        margin-bottom: 20px;
+    }
+
+    .user-edit-form form {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .user-edit-form form button {
+        margin-top: 15px;
+        border-radius: 50px;
+        padding: 12px;
+        font-size: 1.1rem;
+        background-color: #FF6F0F;
+        color: white;
+        border: none;
+        transition: background-color 0.3s ease, transform 0.2s ease;
+    }
+
+    .user-edit-form form button:hover {
+        background-color: #e65c00;
+        transform: translateY(-2px);
+    }
+
+    .user-edit-form form button:focus {
+        outline: none;
+        box-shadow: 0 0 5px rgba(255, 111, 15, 0.6);
+    }
+
+    .user-edit-form form a {
+        margin-top: 10px;
+        text-align: center;
+        color: #6c757d;
+        font-size: 1rem;
+        text-decoration: none;
+    }
+
+    .user-edit-form form a:hover {
+        text-decoration: underline;
+        color: #FF6F0F;
+    }
+
+    .user-edit-form p {
+        margin-bottom: 15px;
+    }
+
+    .user-edit-form input,
+    .user-edit-form select,
+    .user-edit-form textarea {
+        padding: 12px;
+        margin-bottom: 15px;
+        border-radius: 6px;
+        border: 1px solid #ddd;
+        font-size: 1rem;
+        transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .user-edit-form input:focus,
+    .user-edit-form select:focus,
+    .user-edit-form textarea:focus {
+        border-color: #FF6F0F;
+        box-shadow: 0 0 5px rgba(255, 111, 15, 0.4);
+        outline: none;
+    }
+
+    .user-edit-form input:invalid,
+    .user-edit-form select:invalid,
+    .user-edit-form textarea:invalid {
+        border-color: #e74c3c;
+    }
+
+    /* Estilos para mejorar la accesibilidad */
+    .user-edit-form input,
+    .user-edit-form select,
+    .user-edit-form textarea {
+        background-color: #fafafa;
+        transition: background-color 0.3s ease;
+    }
+
+    .user-edit-form input:focus,
+    .user-edit-form select:focus,
+    .user-edit-form textarea:focus {
+        background-color: #fff;
+    }
+
+    .btn {
+        width: 100%;
+        border-radius: 50px;
+        font-size: 1.1rem;
+        padding: 12px;
+    }
+
+    .btn-primary {
+        background-color: #FF6F0F;
+        color: white;
+        border: none;
+    }
+
+    .btn-primary:hover {
+        background-color: #e65c00;
+        transform: translateY(-2px);
+    }
+
+    .btn-secondary {
+        background-color: #6c757d;
+        color: white;
+        border: none;
+    }
+
+    .btn-secondary:hover {
+        background-color: #5a6268;
+    }
+
+</style>
+{% endblock %}

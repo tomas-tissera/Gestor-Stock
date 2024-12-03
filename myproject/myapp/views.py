@@ -16,6 +16,8 @@ from decimal import Decimal
 from datetime import datetime, timedelta
 import json
 from django.db.models import F, Sum
+from .forms import UsuarioForm  # Formulario para editar información del usuario
+from django.contrib import messages
 
 class CustomLoginView(LoginView):
     template_name = 'login.html'
@@ -633,3 +635,18 @@ def empleado_dashboard(request):
     }
     
     return render(request, 'role_based_template.html', context)
+
+
+@login_required
+def usuario_editar(request):
+    user = request.user
+    if request.method == "POST":
+        form = UsuarioForm(request.POST, instance=user)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Tu información ha sido actualizada con éxito.")
+            return redirect('usuario_editar')
+    else:
+        form = UsuarioForm(instance=user)
+
+    return render(request, 'usuario.html', {'form': form})

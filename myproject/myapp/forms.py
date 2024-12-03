@@ -55,3 +55,29 @@ class DetalleVentaForm(forms.ModelForm):
                 )
 
         return cleaned_data
+    
+class UsuarioForm(forms.ModelForm):
+    nueva_contrasena = forms.CharField(
+        label="Nueva Contraseña",
+        required=False,
+        widget=forms.PasswordInput(attrs={'placeholder': 'Dejar en blanco si no desea cambiarla'})
+    )
+
+    class Meta:
+        model = User
+        fields = ['username', 'first_name', 'last_name', 'email']
+        widgets = {
+            'username': forms.TextInput(attrs={'class': 'form-control'}),
+            'first_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'last_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'email': forms.EmailInput(attrs={'class': 'form-control'}),
+        }
+
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        nueva_contrasena = self.cleaned_data.get('nueva_contrasena')
+        if nueva_contrasena:
+            user.set_password(nueva_contrasena)
+        if commit:
+            user.save()
+        return user 

@@ -48,4 +48,7 @@ urlpatterns = [
     #empleado
     path('dashboard/', views.empleado_dashboard, name='empleado_dashboard'),
 
+    #usuario
+    path('usuario_editar/', views.usuario_editar, name='usuario_editar'),
+
 ]
