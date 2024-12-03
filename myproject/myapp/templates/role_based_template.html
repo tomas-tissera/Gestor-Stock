@@ -80,26 +80,7 @@
         </div>
         </div>
     </div>
-    <div class="container mt-4">
-        <h1 class="text-center">Dashboard de Ventas</h1>
     
-        <!-- Gráficos de Ventas -->
-        <h3 class="mt-4">Gráficos de Ventas</h3>
-        <div class="row">
-            <!-- Gráfico de Ventas por Mes -->
-            <div class="col-md-6">
-                <h4>Ventas por Mes</h4>
-                <canvas id="ventasPorMesChart"></canvas>
-            </div>
-    
-            <!-- Gráfico de Ventas por Producto -->
-            <div class="col-md-6">
-                <h4>Ventas por Producto</h4>
-                <canvas id="ventasPorProductoChart"></canvas>
-            </div>
-        </div>
-    
-    </div>
 
     <!-- Script para Gráficos -->
     <script>
@@ -172,6 +153,39 @@
                     }
                 }
             }
+        });
+        var meses = JSON.parse('{{ meses|escapejs }}');
+        var ventasPorMes = JSON.parse('{{ ventas_por_mes|escapejs }}');
+        var productosVendidosLabels = JSON.parse('{{ productos_vendidos_labels|escapejs }}');
+        var productosVendidosData = JSON.parse('{{ productos_vendidos_data|escapejs }}');
+
+        var ctx = document.getElementById('ventasPorMesChart').getContext('2d');
+        var ventasPorMesChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: meses,
+                datasets: [{
+                    label: 'Ventas por Mes',
+                    data: ventasPorMes,
+                    borderColor: 'rgb(75, 192, 192)',
+                    fill: false,
+                }]
+            },
+        });
+
+        var ctx2 = document.getElementById('ventasPorProductoChart').getContext('2d');
+        var ventasPorProductoChart = new Chart(ctx2, {
+            type: 'bar',
+            data: {
+                labels: productosVendidosLabels,
+                datasets: [{
+                    label: 'Ventas por Producto',
+                    data: productosVendidosData,
+                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                    borderColor: 'rgba(255, 99, 132, 1)',
+                    borderWidth: 1
+                }]
+            },
         });
     </script>
 
